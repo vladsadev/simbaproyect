@@ -1,10 +1,13 @@
 <?php
 
+use App\Http\Controllers\EquipmentController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
 });
+
+//Route::get('/eq', [\App\Http\Controllers\EquipmentController::class, 'index']);
 
 Route::middleware([
     'auth:sanctum',
@@ -15,9 +18,10 @@ Route::middleware([
         return view('dashboard.index');
     })->name('dashboard');
 
-    Route::get('/catalogo', function () {
-        return view('equipments.index');
-    })->name('catalogo');
+    Route::get('/catalogo', [EquipmentController::class, 'index'])->name('catalogo');
+    Route::get('/catalogo/create', [EquipmentController::class, 'create'])->name('equipment.create');
+
+
 
     Route::get('/inspecciones', function () {
         return view('inspection.index');

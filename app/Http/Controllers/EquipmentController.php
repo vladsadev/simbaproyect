@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Equipment;
 use App\Http\Requests\StoreEquipmentRequest;
 use App\Http\Requests\UpdateEquipmentRequest;
+use App\Models\EquipmentType;
 
 class EquipmentController extends Controller
 {
@@ -13,7 +14,14 @@ class EquipmentController extends Controller
      */
     public function index()
     {
-        //
+//        $eqs = Equipment::all();
+//        $eqs = Equipment::with('equipmentType')->get();
+        $eqs = Equipment::with('equipmentType')->paginate(5);
+
+        return view('equipments.index', [
+            'eqs' => $eqs
+        ]);
+
     }
 
     /**
@@ -21,7 +29,13 @@ class EquipmentController extends Controller
      */
     public function create()
     {
-        //
+        $eTypes = EquipmentType::all();
+
+        return $eTypes;
+        return view('equipments.create', [
+            'eTypes' => $eTypes
+        ]);
+
     }
 
     /**

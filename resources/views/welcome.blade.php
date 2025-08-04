@@ -22,7 +22,7 @@
         <!-- Hero section -->
         <div class="relative isolate overflow-hidden bg-gray-900 pt-6 lg:pt-16 pb-8 sm:pb-12 min-h-screen">
             <!-- Background Image -->
-            <img src="{{Vite::asset('resources/images/simbaHome.webp')}}"
+            <img src="{{Vite::asset('resources/images/simba1.webp')}}"
                  alt="Equipo minero en operación" class="absolute inset-0 -z-20 size-full object-cover"/>
 
             <!-- Dark Overlay for better text contrast -->
