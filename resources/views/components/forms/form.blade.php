@@ -1,5 +1,5 @@
 <form {{ $attributes([
-    "class" => "max-w-2xl mx-auto space-y-6",
+    "class" => "max-w-2xl mx-auto space-y-4",
     "method" => "GET"
     ]) }}>
     @if ($attributes->get('method', 'GET') !== 'GET')

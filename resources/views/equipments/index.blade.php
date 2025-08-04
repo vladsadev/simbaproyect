@@ -6,7 +6,10 @@
     </x-slot>
 
     <x-panels.main>
-        ok
+
+        {{--        <x-job-card-wide/>--}}
+        <x-card-machine/>
+
     </x-panels.main>
 
 </x-app-layout>

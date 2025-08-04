@@ -121,4 +121,17 @@
     </main>
 
 
+{{--    <x-forms.form method="POST" action="/jobs">--}}
+{{--        <x-forms.input label="Marca" name="location" placeholder="Toyota"/>--}}
+{{--        <x-forms.input label="Modelo" name="location" placeholder="S1400 "/>--}}
+{{--        <x-forms.input label="Tipo" name="location" placeholder="Excavadora"/>--}}
+{{--        <x-forms.select label="Schedule" name="schedule">--}}
+{{--            <option> Operador 1</option>--}}
+{{--            <option> Operador 2</option>--}}
+{{--        </x-forms.select>--}}
+{{--        <x-forms.input label="URL" name="url" placeholder="https://qualcomsrl.com"/>--}}
+{{--        <x-forms.divider/>--}}
+{{--        <x-forms.button class="cursor-pointer"> Guardar Maquina</x-forms.button>--}}
+{{--    </x-forms.form>--}}
+
 </x-guest-layout>

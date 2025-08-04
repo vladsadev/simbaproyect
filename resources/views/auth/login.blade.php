@@ -67,7 +67,7 @@
         <!-- Right side - Image -->
         <div class="hidden lg:block relative flex-1">
             <!-- Background Image -->
-            <img src="{{Vite::asset('resources/images/simbaHome.webp')}}"
+            <img src="{{Vite::asset('resources/images/simba1.webp')}}"
                  alt="Equipos mineros" class="absolute inset-0 h-full w-full object-cover"/>
 
             <!-- Dark Overlay -->

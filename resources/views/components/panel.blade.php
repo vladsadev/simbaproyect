@@ -1,6 +1,10 @@
 <div {{$attributes([
-    'class' => 'p-4 bg-white/10 rounded-lg border border-transparent hover:border-blue-900 group
-transition-colors duration-300'
+    'class' => 'bg-white p-6 flex flex-col md:flex-row gap-x-6 rounded-xl shadow-lg hover:shadow-xl transition-all
+    duration-300 group
+    border-l-4
+    border-yellow-500 border border-gray-200'
     ])}}>
     {{$slot}}
 </div>
+
+
