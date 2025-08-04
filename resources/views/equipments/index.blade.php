@@ -8,7 +8,7 @@
     <x-panels.main>
 
         {{--        <x-job-card-wide/>--}}
-        <x-card-machine/>
+        <x-card-machine />
 
     </x-panels.main>
 

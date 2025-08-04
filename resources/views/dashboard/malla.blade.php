@@ -6,7 +6,9 @@
     </x-slot>
 
     <x-panels.main>
-        ok
+
+
+
     </x-panels.main>
 
 </x-app-layout>

@@ -4,59 +4,14 @@
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 {{ __('Gestión de Inspecciones') }}
             </h2>
-            <div class="flex items-center space-x-4">
-                <select class="rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500">
-                    <option>SIMBA-SZD-001</option>
-                    <option>CAT-320D-002</option>
-                    <option>KOM-930E-003</option>
-                    <option>VOL-A40G-004</option>
-                </select>
-                <button class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-md font-medium transition-colors">
-                    Cambiar Equipo
-                </button>
-            </div>
+
         </div>
     </x-slot>
 
     <div class="py-8">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <!-- Header del Equipo -->
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg mb-6">
-                <div class="bg-gradient-to-r from-yellow-600 to-yellow-700 px-6 py-4">
-                    <div class="flex justify-between items-center text-white">
-                        <div class="space-y-4">
-                            <div class="flex gap-4 items-center">
-                                <p class="text-sm text-yellow-100">Nombre del Operador del Equipo:</p>
-                                <select class="rounded-md border-gray-300 shadow-sm text-gray-700 focus:border-yellow-500
-                                focus:ring-yellow-500">
-                                    <option>SIMBA-SZD-001</option>
-                                    <option>CAT-320D-002</option>
-                                    <option>KOM-930E-003</option>
-                                    <option>VOL-A40G-004</option>
-                                </select>
-                            </div>
-{{--                            <h3 class="text-lg font-semibold">Equipo                                 SIMBA-SZD-001</h3>--}}
-{{--                            <p class="text-yellow-100">Perforadora - Serie: EPI-2024-001</p>--}}
-                            <div class="flex gap-4 items-center">
-                                <p class="text-sm text-yellow-100">Ubicación:</p>
-                                 <x-input class="w-full" placeholder="zona este, parte izquierda cord.."/>
-                            </div>
-                            <div class="flex gap-4 items-center">
-                                <p class="text-sm text-yellow-100">Nombre del Operador del Equipo:</p>
-                                <select class="rounded-md border-gray-300 shadow-sm text-gray-700 focus:border-yellow-500
-                                focus:ring-yellow-500">
-                                    <option>Luis Perez</option>
-                                    <option>Marco Torrez</option>
-                                    <option>Pedro Alvarez</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="text-right self-start">
-                            <p class="text-sm lg:text-base text-yellow-100 mt-1">Última inspección: Hace 2 horas</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <!-- Formulario Principal de Inspección -->
@@ -108,6 +63,10 @@
                                         </button>
                                     </div>
                                 @endforeach
+                               <div>
+                                   <x-forms.input label="Nombre del Operador" name="operador" placeholder="Diego Garcia"/>
+                               </div>
+
                             </div>
 
                             <!-- Observaciones Generales -->
@@ -144,6 +103,31 @@
 
                 <!-- Panel Lateral -->
                 <div class="space-y-6">
+
+                    <!-- Detalles del Inspector -->
+                    <div class="bg-white shadow-xl rounded-lg overflow-hidden">
+                        <div class="bg-yellow-600 px-4 py-3">
+                            <h3 class="text-white font-semibold">Detalles del Inspector</h3>
+                        </div>
+                        <div class="p-4">
+                            <form class="space-y-4" id="maintenanceForm">
+                                @csrf
+                                <div>
+                                    <x-forms.input label="Nombre del inspector" name="nombre" placeholder="Marcelo Torrez"/>
+                                    <x-forms.input label="Horas de trabajo" name="horas" placeholder="38 horas"/>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Fecha</label>
+                                    <input type="date" name="fecha" class="w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Hora</label>
+                                    <input type="time" name="hora" class="w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-sm">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
                     <!-- Panel de Seguridad -->
                     <div class="bg-white shadow-xl rounded-lg overflow-hidden">
                         <div class="bg-blue-600 px-4 py-3">
@@ -176,51 +160,6 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- Panel de Mantenimiento -->
-                    <div class="bg-white shadow-xl rounded-lg overflow-hidden">
-                        <div class="bg-yellow-600 px-4 py-3">
-                            <h3 class="text-white font-semibold">Agendar Mantenimiento</h3>
-                        </div>
-                        <div class="p-4">
-                            <form class="space-y-4" id="maintenanceForm">
-                                @csrf
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Tipo de Mantenimiento</label>
-                                    <select name="tipo" class="w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-sm">
-                                        <option value="preventivo">Preventivo</option>
-                                        <option value="correctivo">Correctivo</option>
-                                        <option value="emergencia">Emergencia</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Fecha</label>
-                                    <input type="date" name="fecha" class="w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-sm">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Hora</label>
-                                    <input type="time" name="hora" class="w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-sm">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Prioridad</label>
-                                    <select name="prioridad" class="w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-sm">
-                                        <option value="baja">Baja</option>
-                                        <option value="media">Media</option>
-                                        <option value="alta">Alta</option>
-                                        <option value="critica">Crítica</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
-                                    <textarea name="descripcion" rows="3" class="w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-sm" placeholder="Describa el trabajo requerido..."></textarea>
-                                </div>
-                                <button type="submit" class="w-full bg-yellow-600 hover:bg-green-700 text-white py-2 px-4
-                                rounded-md font-medium transition-colors text-sm">
-                                    Agendar Mantenimiento
-                                </button>
-                            </form>
                         </div>
                     </div>
 

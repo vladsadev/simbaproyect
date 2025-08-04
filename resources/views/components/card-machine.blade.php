@@ -19,6 +19,9 @@
             <a href="#" class="inline-block mt-4 px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors font-semibold text-sm">
                 Ficha Técnica→
             </a>
+            <a href="#" class="inline-block mt-4 px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors font-semibold text-sm">
+               Manuales
+            </a>
         </div>
 
 {{--    Acciones --}}
@@ -27,6 +30,7 @@
                 <p class="font-bold">Estado:</p>
                 <span>Operativa</span>
             </div>
+
             <h4 class="text-lg font-semibold my-2">Acciones</h4>
             <a href="#" class="inline-block mt-4 px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors font-semibold text-sm">
                 Agendar Mantenimiento
