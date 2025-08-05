@@ -4,18 +4,32 @@ namespace Database\Seeders;
 
 use App\Models\Equipment;
 use App\Models\EquipmentType;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class EquipmentSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        $equipmentType = EquipmentType::factory(3)->create();
+        // Crear los 3 tipos de equipos específicos
+        $excavadora = EquipmentType::factory()->excavadora()->create();
+        $camion = EquipmentType::factory()->camion()->create();
+        $perforadora = EquipmentType::factory()->perforadora()->create();
 
-        Equipment::factory(10)->hasAttached($equipmentType)->create();
+        // Crear equipos con especificaciones realistas por tipo
+
+        // 5 Excavadoras con especificaciones de excavadora
+        Equipment::factory(3)
+            ->excavadora()
+            ->create(['equipment_type_id' => $excavadora->id]);
+
+        // 8 Camiones con especificaciones de camión
+        Equipment::factory(2)
+            ->camion()
+            ->create(['equipment_type_id' => $camion->id]);
+
+        // 3 Perforadoras con especificaciones de perforadora
+        Equipment::factory(3)
+            ->perforadora()
+            ->create(['equipment_type_id' => $perforadora->id]);
     }
 }

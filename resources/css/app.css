@@ -8,14 +8,13 @@
 @source '../../storage/framework/views/*.php';
 
 @theme {
-  --font-sans:
-    Figtree, ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
+    --font-sans: Figtree, ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
     'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
-     --color-yellow-main:#E79F0D;
-    --color-yellow-light:#F4B73E;
+    --color-yellow-main: #E79F0D;
+    --color-yellow-light: #F4B73E;
 
-    --color-blue-main:#18344E;
-    --color-blue-light:#304D6D;
+    --color-blue-main: #18344E;
+    --color-blue-light: #304D6D;
 
 }
 
@@ -28,20 +27,18 @@
   color utility to any element that depends on these defaults.
 */
 @layer base {
-  *,
-  ::after,
-  ::before,
-  ::backdrop,
-  ::file-selector-button {
-    border-color: var(--color-gray-200, currentcolor);
-  }
+    *,
+    ::after,
+    ::before,
+    ::backdrop,
+    ::file-selector-button {
+        border-color: var(--color-gray-200, currentcolor);
+    }
 }
 
 [x-cloak] {
     display: none;
 }
-
-
 
 
 /* Estilos personalizados para inspecciones */

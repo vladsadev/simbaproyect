@@ -15,7 +15,7 @@
                     <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
                         {{ __('Principal') }}
                     </x-nav-link>
-                    <x-nav-link href="{{ route('catalogo') }}" :active="request()->routeIs('catalogo')">
+                    <x-nav-link href="{{ route('equipment.index') }}" :active="request()->routeIs('catalogo')">
                         {{ __('Catálogo') }}
                     </x-nav-link>
                     <x-nav-link href="{{ route('inspecciones') }}" :active="request()->routeIs('inspecciones')">
@@ -154,7 +154,7 @@
             <x-responsive-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
                 {{ __('Panel Principal') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link href="{{ route('catalogo') }}" :active="request()->routeIs('catalogo')">
+            <x-responsive-nav-link href="{{ route('equipment.index') }}" :active="request()->routeIs('catalogo')">
                 {{ __('Catálogo') }}
             </x-responsive-nav-link>
             <x-responsive-nav-link href="{{ route('inspecciones') }}" :active="request()->routeIs('inspecciones')">

@@ -6,6 +6,8 @@ use App\Models\Equipment;
 use App\Http\Requests\StoreEquipmentRequest;
 use App\Http\Requests\UpdateEquipmentRequest;
 use App\Models\EquipmentType;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class EquipmentController extends Controller
 {
@@ -16,10 +18,10 @@ class EquipmentController extends Controller
     {
 //        $eqs = Equipment::all();
 //        $eqs = Equipment::with('equipmentType')->get();
-        $eqs = Equipment::with('equipmentType')->paginate(5);
+        $equipment = Equipment::with('equipmentType')->paginate(6);
 
-        return view('equipments.index', [
-            'eqs' => $eqs
+        return view('equipment.index', [
+            'equipment' => $equipment
         ]);
 
     }
@@ -29,11 +31,11 @@ class EquipmentController extends Controller
      */
     public function create()
     {
-        $eTypes = EquipmentType::all();
-
-        return $eTypes;
-        return view('equipments.create', [
-            'eTypes' => $eTypes
+        $equipment = EquipmentType::all();
+//
+//        return $equipment;
+        return view('equipment.create', [
+            'equipment' => $equipment
         ]);
 
     }
@@ -41,17 +43,36 @@ class EquipmentController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreEquipmentRequest $request)
+    public function store()
     {
-        //
+        $validated = request()->validate([
+            'equipment_type_id' => 1,
+            'code' => ['required'],
+            'brand' => ['required'],
+            'model' => ['required'],
+            'year' => ['required', 'integer'],
+            'status' => ['required'],
+            'hours_worked' => ['required', 'numeric'],
+        ]);
+
+        Equipment::create($validated);
+
+        return redirect(route('equipment.index'));
+
     }
 
     /**
      * Display the specified resource.
      */
+//    public function show(Equipment $equipment)
     public function show(Equipment $equipment)
     {
-        //
+
+//        $equipment = Equipment::find($equipment);
+
+        return view('equipment.show', [
+            'equipment' => $equipment
+        ]);
     }
 
     /**

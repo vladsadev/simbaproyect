@@ -17,8 +17,41 @@ class EquipmentTypeFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->randomElement(['Excavadora', 'Camión', 'Perforadora']),
-            'description' => fake()->text(140)
+            'name' => '',
+            'description' => ''
         ];
+    }
+
+    /**
+     * Indicate that the equipment type is an Excavadora.
+     */
+    public function excavadora(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'name' => 'Excavadora',
+            'description' => 'Equipo pesado utilizado para excavación y movimiento de tierra en operaciones mineras.'
+        ]);
+    }
+
+    /**
+     * Indicate that the equipment type is a Camión.
+     */
+    public function camion(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'name' => 'Camión',
+            'description' => 'Vehículo de transporte pesado para el traslado de materiales extraídos.'
+        ]);
+    }
+
+    /**
+     * Indicate that the equipment type is a Perforadora.
+     */
+    public function perforadora(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'name' => 'Perforadora',
+            'description' => 'Equipo especializado en perforación de barrenos para voladuras y exploración.'
+        ]);
     }
 }

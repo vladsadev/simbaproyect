@@ -17,21 +17,17 @@
 
     <x-panels.main>
 
-        {{--        <x-job-card-wide/>--}}
-        <x-card-machine/>
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 p-4 bg-gray-50">
+            @foreach($equipment as $machine)
 
-        <ul>
+                <x-machine.card :$machine/>
 
-            @foreach($eqs as $e)
-                <li>{{$e->equipmentType->name}}, brand: {{$e->brand}}</li>
             @endforeach
-
-        </ul>
-
-        <div>
-            {{$eqs->links()}}
         </div>
 
+        <div>
+            {{$equipment->links()}}
+        </div>
     </x-panels.main>
 
 </x-app-layout>

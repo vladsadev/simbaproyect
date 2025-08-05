@@ -18,8 +18,10 @@ Route::middleware([
         return view('dashboard.index');
     })->name('dashboard');
 
-    Route::get('/catalogo', [EquipmentController::class, 'index'])->name('catalogo');
-    Route::get('/catalogo/create', [EquipmentController::class, 'create'])->name('equipment.create');
+    Route::get('/catalogo', [EquipmentController::class, 'index'])->name('equipment.index');
+    Route::get('/catalogo/crear', [EquipmentController::class, 'create'])->name('equipment.create');
+    Route::get('/catalogo/{equipment}', [EquipmentController::class, 'show'])->name('equipment.show');
+    Route::post('/catalogo',[EquipmentController::class,'store'])->name('equipment.store');
 
 
 

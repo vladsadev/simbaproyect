@@ -13,6 +13,10 @@ class Equipment extends Model
 
     protected $guarded = [];
 
+    protected $casts = [
+        'year' => 'integer',
+    ];
+
     public function equipmentType(): BelongsTo
     {
         return $this->belongsTo(EquipmentType::class);
