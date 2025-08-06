@@ -9,7 +9,7 @@
             </h2>
 
 
-            <x-link-btn href="{{route('catalogo')}}">Volver</x-link-btn>
+            <x-link-btn href="{{route('equipment.index')}}">Volver</x-link-btn>
 
         </div>
     </x-slot>
@@ -19,7 +19,7 @@
 
         <div class="max-w-6xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
 
-            <x-machine.machine/>
+            <x-machine.machine :$equipment/>
 
         </div>
 

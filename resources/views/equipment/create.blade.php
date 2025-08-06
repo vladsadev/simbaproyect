@@ -11,22 +11,36 @@
     </x-slot>
 
     <x-panels.main>
-        {{--        'equipment_type_id' => ['required', 'exists:equipment_types'],--}}
-        {{--        'code' => ['required'],--}}
-        {{--        'brand' => ['required'],--}}
-        {{--        'model' => ['required'],--}}
-        {{--        'year' => ['required', 'integer'],--}}
-        {{--        'status' => ['required'],--}}
-        {{--        'hours_worked' => ['required', 'numeric'],--}}
+
         <x-forms.form method="POST" action="{{route('equipment.store')}}">
-            <x-forms.input label="Código" name="code" placeholder="SK23"/>
-            <x-forms.input label="Marca" name="brand" placeholder="Caterpillar"/>
-            <x-forms.input label="Modelo" name="model" placeholder="917u"/>
-            <x-forms.input label="Año" name="year" placeholder="2021 "/>
-            <x-forms.input label="Estado" name="status" placeholder="operativa"/>
-            <x-forms.input label="Horas Trabajadas" name="hours_worked" placeholder="200 "/>
+            <div class=" bg-black flex gap-3 w-full">
+                <!-- Código del equipo -->
+                <x-forms.input label="Código" name="code" placeholder="EXC-001" class="w-full" />
+                <!-- Marca -->
+                <x-forms.input label="Marca" name="brand" placeholder="Caterpillar" class="flex-1"/>
+                <!-- Modelo -->
+                <x-forms.input label="Modelo" name="model" placeholder="S7D" class=""/>
+            </div>
+            <!-- Año -->
+            <x-forms.input label="Año" name="year" placeholder="2024"/>
+            <!-- Estado -->
+            <x-forms.select label="Estado" name="status">
+                <option value="active">Operativa</option>
+                <option value="maintenance">En Mantenimiento</option>
+                <option value="inactive">Inactiva</option>
+            </x-forms.select>
+
+            <!-- Tipo de Equipo -->
+            <x-forms.select label="Tipo de Equipo" name="equipment_type_id">
+                @foreach($eTypes as $eType)
+                    <option value="{{ $eType->id }}">{{ $eType->name }}</option>
+                @endforeach
+            </x-forms.select>
+
+
+
             <x-forms.divider/>
-            <x-forms.button class="cursor-pointer"> Guardar Maquina</x-forms.button>
+            <x-forms.button class="cursor-pointer">Guardar Equipo</x-forms.button>
         </x-forms.form>
 
     </x-panels.main>

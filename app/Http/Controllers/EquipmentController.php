@@ -6,8 +6,6 @@ use App\Models\Equipment;
 use App\Http\Requests\StoreEquipmentRequest;
 use App\Http\Requests\UpdateEquipmentRequest;
 use App\Models\EquipmentType;
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 
 class EquipmentController extends Controller
 {
@@ -16,14 +14,23 @@ class EquipmentController extends Controller
      */
     public function index()
     {
-//        $eqs = Equipment::all();
-//        $eqs = Equipment::with('equipmentType')->get();
-        $equipment = Equipment::with('equipmentType')->paginate(6);
+        $equipment = Equipment::latest()->with('equipmentType')->paginate(6);
 
         return view('equipment.index', [
             'equipment' => $equipment
         ]);
+    }
 
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(StoreEquipmentRequest $request)
+    {
+        // ✅ Crear el equipo con los datos validados
+        $equipment = Equipment::create($request->validated());
+
+        // Redireccionar con mensaje de éxito
+        return redirect()->route('equipment.index')->with('success', 'Equipo creado exitosamente');
     }
 
     /**
@@ -31,64 +38,44 @@ class EquipmentController extends Controller
      */
     public function create()
     {
-        $equipment = EquipmentType::all();
-//
-//        return $equipment;
+        $eTypes = EquipmentType::all();
+
+        // ✅ Retornar la vista, no los datos directamente
         return view('equipment.create', [
-            'equipment' => $equipment
+            'eTypes' => $eTypes
         ]);
-
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store()
-    {
-        $validated = request()->validate([
-            'equipment_type_id' => 1,
-            'code' => ['required'],
-            'brand' => ['required'],
-            'model' => ['required'],
-            'year' => ['required', 'integer'],
-            'status' => ['required'],
-            'hours_worked' => ['required', 'numeric'],
-        ]);
-
-        Equipment::create($validated);
-
-        return redirect(route('equipment.index'));
-
     }
 
     /**
      * Display the specified resource.
      */
-//    public function show(Equipment $equipment)
     public function show(Equipment $equipment)
     {
-
-//        $equipment = Equipment::find($equipment);
-
-        return view('equipment.show', [
-            'equipment' => $equipment
-        ]);
+//       dd($equipment);
+        return view('equipment.show', compact('equipment'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Equipment $equipment)
-    {
-        //
-    }
+//    public function edit(Equipment $equipment)
+//    {
+//        $eTypes = EquipmentType::all();
+//
+//        return view('equipment.edit', [
+//            'equipment' => $equipment,
+//            'eTypes' => $eTypes
+//        ]);
+//    }
 
     /**
      * Update the specified resource in storage.
      */
     public function update(UpdateEquipmentRequest $request, Equipment $equipment)
     {
-        //
+        $equipment->update($request->validated());
+
+        return redirect()->route('equipment.index')->with('success', 'Equipo actualizado exitosamente');
     }
 
     /**
@@ -96,6 +83,8 @@ class EquipmentController extends Controller
      */
     public function destroy(Equipment $equipment)
     {
-        //
+        $equipment->delete();
+
+        return redirect()->route('equipment.index')->with('success', 'Equipo eliminado exitosamente');
     }
 }

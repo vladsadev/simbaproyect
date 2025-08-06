@@ -48,7 +48,6 @@ return new class extends Migration {
             $table->decimal('max_load', 8, 2)->nullable()->comment('Carga máxima en toneladas');
 
             // Información operacional
-            $table->decimal('hours_worked', 10, 2)->default(0)->comment('Horas trabajadas totales');
             $table->date('last_maintenance')->nullable();
             $table->date('next_maintenance')->nullable();
             $table->text('notes')->nullable();

@@ -12,8 +12,8 @@ class EquipmentFactory extends Factory
         return [
             'equipment_type_id' => EquipmentType::factory(),
             'code' => $this->generateEquipmentCode(),
-            'brand' => $this->faker->randomElement(['Caterpillar', 'Epiroc', 'Komatsu', 'Liebherr']),
-            'model' => $this->faker->randomElement(['S7D', 'XT200', 'JJ300', 'R9800', 'PC8000']),
+            'brand' => $this->faker->randomElement(['Caterpillar', 'Epiroc', 'Komatsu', 'Liebherr','Epiroc','Volvo']),
+            'model' => $this->faker->randomElement(['Simba S7', 'XT200', 'JJ300', 'R9800', 'PC8000']),
             'year' => $this->faker->numberBetween(2015, 2025),
             'status' => $this->faker->randomElement(['active', 'maintenance', 'inactive']),
             'location' => $this->faker->randomElement(['Mina Norte', 'Mina Sur', 'Taller Central', 'Área de Mantenimiento']),
@@ -31,10 +31,18 @@ class EquipmentFactory extends Factory
             'bucket_capacity' => $this->faker->randomFloat(2, 2.0, 8.0), // m³
             'max_load' => $this->faker->randomFloat(2, 15.0, 50.0), // Toneladas
 
-            'hours_worked' => $this->faker->randomFloat(2, 0, 10000),
             'last_maintenance' => $this->faker->optional()->dateTimeBetween('-6 months', 'now'),
             'next_maintenance' => $this->faker->optional()->dateTimeBetween('now', '+3 months'),
         ];
+    }
+
+    private function generateEquipmentCode(): string
+    {
+        $prefixes = ['EXC', 'CAM', 'PER'];
+        $prefix = $this->faker->randomElement($prefixes);
+        $number = str_pad($this->faker->unique()->numberBetween(1, 999), 3, '0', STR_PAD_LEFT);
+
+        return $prefix . '-' . $number;
     }
 
     /**
@@ -42,7 +50,7 @@ class EquipmentFactory extends Factory
      */
     public function excavadora(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'length' => $this->faker->randomFloat(2, 10.0, 14.0),
             'width' => $this->faker->randomFloat(2, 3.0, 4.0),
             'height' => $this->faker->randomFloat(2, 3.5, 4.5),
@@ -54,7 +62,7 @@ class EquipmentFactory extends Factory
 
     public function camion(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'length' => $this->faker->randomFloat(2, 12.0, 16.0),
             'width' => $this->faker->randomFloat(2, 3.5, 4.5),
             'height' => $this->faker->randomFloat(2, 4.0, 5.0),
@@ -67,7 +75,7 @@ class EquipmentFactory extends Factory
 
     public function perforadora(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'length' => $this->faker->randomFloat(2, 8.0, 12.0),
             'width' => $this->faker->randomFloat(2, 2.5, 3.5),
             'height' => $this->faker->randomFloat(2, 3.0, 4.0),
@@ -76,14 +84,5 @@ class EquipmentFactory extends Factory
             'bucket_capacity' => null, // Perforadoras no tienen cuchara
             'max_load' => null,
         ]);
-    }
-
-    private function generateEquipmentCode(): string
-    {
-        $prefixes = ['EXC', 'CAM', 'PER'];
-        $prefix = $this->faker->randomElement($prefixes);
-        $number = str_pad($this->faker->unique()->numberBetween(1, 999), 3, '0', STR_PAD_LEFT);
-
-        return $prefix . '-' . $number;
     }
 }
