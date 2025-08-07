@@ -148,6 +148,15 @@
 
                 <!-- Botones de Acción -->
                 <div class="flex justify-between items-center pt-6 border-t border-gray-200">
+                    <div class="flex items-center space-x-2 text-sm text-gray-600">
+                        <span>Progreso:</span>
+                        <div class="w-32 bg-gray-200 rounded-full h-2">
+                            <div class="progress-bar bg-yellow-600 h-2 rounded-full transition-all duration-300"
+                                 style="width: 0%"></div>
+                        </div>
+                        <span class="progress-text">0/10</span>
+                    </div>
+
                     <div class="flex space-x-3">
                         <x-link-btn href="#">Cancelar</x-link-btn>
                         <x-forms.button>Confirmar Inspección</x-forms.button>
