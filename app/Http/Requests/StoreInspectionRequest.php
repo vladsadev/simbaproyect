@@ -11,18 +11,65 @@ class StoreInspectionRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true; // Cambiado de false a true
     }
 
     /**
      * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         return [
-            //
+            'equipment_id' => 'required|exists:equipment,id',
+            'inspector_name' => 'required|string|max:255',
+            'work_hours' => 'nullable|numeric|min:0|max:99999',
+            'operator_name' => 'nullable|string|max:255',
+            'inspection_date' => 'required|date',
+            'inspection_items' => 'required|array',
+            'inspection_items.*' => 'required|boolean',
+            'observations' => 'nullable|string|max:1000',
+            'total_items' => 'required|integer|min:1',
+            'checked_items' => 'required|integer|min:0',
         ];
+    }
+
+    /**
+     * Get custom error messages.
+     */
+    public function messages(): array
+    {
+        return [
+            'equipment_id.required' => 'Debe seleccionar un equipo.',
+            'equipment_id.exists' => 'El equipo seleccionado no es válido.',
+            'inspector_name.required' => 'El nombre del inspector es obligatorio.',
+            'inspector_name.max' => 'El nombre del inspector no puede exceder 255 caracteres.',
+            'work_hours.numeric' => 'Las horas de trabajo deben ser un número.',
+            'work_hours.min' => 'Las horas de trabajo no pueden ser negativas.',
+            'inspection_date.required' => 'La fecha de inspección es obligatoria.',
+            'inspection_date.date' => 'Debe proporcionar una fecha válida.',
+            'inspection_items.required' => 'Debe completar los items de inspección.',
+            'inspection_items.array' => 'Los items de inspección deben ser un array.',
+            'total_items.required' => 'Se debe especificar el total de items.',
+            'checked_items.required' => 'Se debe especificar los items verificados.',
+        ];
+    }
+
+    /**
+     * Prepare the data for validation.
+     */
+    protected function prepareForValidation()
+    {
+        // Contar items automáticamente si no se proporcionan
+        if (!$this->has('total_items') && $this->has('inspection_items')) {
+            $this->merge([
+                'total_items' => count($this->inspection_items ?? []),
+            ]);
+        }
+
+        if (!$this->has('checked_items') && $this->has('inspection_items')) {
+            $this->merge([
+                'checked_items' => count(array_filter($this->inspection_items ?? [], fn($item) => $item === true || $item === '1' || $item === 1)),
+            ]);
+        }
     }
 }
