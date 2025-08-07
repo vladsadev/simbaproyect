@@ -18,7 +18,7 @@
                     <x-nav-link href="{{ route('equipment.index') }}" :active="request()->routeIs('catalogo')">
                         {{ __('Catálogo') }}
                     </x-nav-link>
-                    <x-nav-link href="{{ route('inspecciones') }}" :active="request()->routeIs('inspecciones')">
+                    <x-nav-link href="{{ route('inspection.index') }}" :active="request()->routeIs('inspecciones')">
                         {{ __('Inspecciones') }}
                     </x-nav-link>
                     <x-nav-link href="{{ route('malla') }}" :active="request()->routeIs('malla')">
@@ -156,9 +156,6 @@
             </x-responsive-nav-link>
             <x-responsive-nav-link href="{{ route('equipment.index') }}" :active="request()->routeIs('catalogo')">
                 {{ __('Catálogo') }}
-            </x-responsive-nav-link>
-            <x-responsive-nav-link href="{{ route('inspecciones') }}" :active="request()->routeIs('inspecciones')">
-                {{ __('Inspecciones') }}
             </x-responsive-nav-link>
             <x-responsive-nav-link href="{{ route('malla') }}" :active="request()->routeIs('malla')">
                 {{ __('Malla de Perforación') }}

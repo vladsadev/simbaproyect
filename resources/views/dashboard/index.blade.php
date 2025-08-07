@@ -8,7 +8,7 @@
     <x-panels.main>
 
         <!-- Estadísticas Generales -->
-        <x-description-heading>Resumen flota</x-description-heading>
+        <x-description-heading>Resumen General</x-description-heading>
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                 <div class="flex items-center">
@@ -75,7 +75,7 @@
             </div>
         </div>
 
-        <x-description-heading>Detalla por Tipo de Maquina</x-description-heading>
+        <x-description-heading>Detalle por Tipo de Máquina</x-description-heading>
         <!-- Categorías de Equipos -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <!-- Perforadoras -->

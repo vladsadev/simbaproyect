@@ -60,7 +60,7 @@ class EquipmentController extends Controller
      */
     public function edit(Equipment $equipment)
     {
-       $eTypes = EquipmentType::all();
+        $eTypes = EquipmentType::all();
 
         return view('equipment.edit', [
             'equipment' => $equipment,
@@ -73,8 +73,22 @@ class EquipmentController extends Controller
      */
     public function update(UpdateEquipmentRequest $request, Equipment $equipment)
     {
+        try {
+            // Actualizar con datos validados
+            $equipment->update($request->validated());
 
-        return "ok, I'll do";
+            // Redireccionar con mensaje de éxito
+            return redirect()
+                ->route('equipment.show', $equipment)
+                ->with('success', 'Equipo actualizado exitosamente');
+
+        } catch (\Exception $e) {
+            // En caso de error, redirigir de vuelta con el error
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Error al actualizar el equipo: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -82,6 +96,7 @@ class EquipmentController extends Controller
      */
     public function destroy(Equipment $equipment)
     {
+//        return 'ok, lo hago';
         $equipment->delete();
 
         return redirect()->route('equipment.index')->with('success', 'Equipo eliminado exitosamente');

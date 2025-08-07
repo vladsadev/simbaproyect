@@ -1,11 +1,24 @@
 @props(['equipment'])
 
+@php
+    $estado= $equipment->status;
+
+if($estado === 'active'){
+    $classes = 'bg-green-300';
+}else{
+
+    $classes = 'bg-red-300';
+}
+
+
+@endphp
+
 <!-- Imagen principal -->
 <div class="relative">
     <img src="{{Vite::asset('resources/images/simba1.webp')}}" alt="SIMBA S7D" class="w-full h-72 object-cover">
-    <span class="absolute top-4 left-4 bg-green-300 text-blue-main text-sm md:text-base font-semibold px-4 py-1 rounded-full
-    shadow">
-      Operativa
+    <span class="absolute top-4 left-4 text-blue-main text-sm md:text-base font-semibold px-4 py-1 rounded-full
+    shadow {{$classes}}">
+        {{__($equipment->status)}}
     </span>
 </div>
 
@@ -15,29 +28,45 @@
     <!-- Encabezado -->
     <div class="flex justify-between">
         <div>
-{{--            <h1 class="text-3xl font-bold text-gray-900">{{$equipment->equipmentType->name}} <span--}}
-{{--                    class="text-yellow-main"> {{$equipment->model}}</span></h1>--}}
-            <h3 class="text-2xl font-bold">
+            <h2 class="text-2xl font-bold text-yellow-main">
                 Código: {{$equipment->code}}
-            </h3>
+            </h2>
             <p class="text-gray-600 mt-1 text-sm lg:text-base"> Marca: {{$equipment->brand}} •
                 Modelo:
                 {{$equipment->model}} •
                 Año:
                 {{$equipment->year}}
             </p>
-            <p class="text-gray-500 text-xs mt-1">Ubicación: {{$equipment->location}}</p>
+            <p class="text-gray-500 text-xs lg:text-base mt-1">Ubicación: {{$equipment->location}}</p>
         </div>
-        <!--Botones de Acciones -->
+        <!--Botones de Acción Administrativa -->
         <div class="flex flex-col gap-2 justify-start items-end text-center">
-            <x-link-btn variant="db" href="{{route('equipment.edit',$equipment)}}" class="text-center">Editar</x-link-btn>
-            <x-link-btn>Agendar Mantenimiento</x-link-btn>
+            <div class="flex gap-2">
+
+                <x-forms.button form="delete-form">Borrar
+                </x-forms.button>
+
+                <x-link-btn variant="db" href="{{route('equipment.edit',$equipment)}}" class="text-center">Editar</x-link-btn>
+            </div>
+
         </div>
+        <form id="delete-form" method="POST" action="{{route('equipment.destroy',$equipment)}}" class="hidden">
+            @csrf
+            @method('DELETE')
+        </form>
+    </div>
+
+    <!-- Acciones de control y servicio-->
+    <div>
+        <h3 class="text-xl font-semibold text-gray-800 mb-3">Acciones Sobre el equipo</h3>
+
+        <x-link-btn>Agendar Mantenimiento</x-link-btn>
+        <x-link-btn href="{{route('inspection.create',$equipment)}}">Realizar Inspección</x-link-btn>
     </div>
 
     <!-- Ficha técnica -->
     <div>
-        <h2 class="text-xl font-semibold text-gray-800 mb-3">Ficha Técnica</h2>
+        <h3 class="text-xl font-semibold text-gray-800 mb-3">Ficha Técnica</h3>
         <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm text-gray-700">
             <p><span class="font-medium">Largo:</span> {{$equipment->length}} m</p>
             <p><span class="font-medium">Ancho:</span> {{$equipment->width}} m</p>
@@ -55,7 +84,7 @@
 
     <!-- Mantenimiento -->
     <div>
-        <h2 class="text-xl font-semibold text-gray-800 mb-3">Mantenimiento</h2>
+        <h3 class="text-xl font-semibold text-gray-800 mb-3">Mantenimiento</h3>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600">
             <p><span class="font-medium">Último Mantenimiento:</span> 2025-04-26</p>
             <p><span class="font-medium">Próximo Mantenimiento:</span> 2025-07-07</p>
@@ -69,7 +98,7 @@
 
     <!-- Manuales-->
     <div>
-        <h2 class="text-xl font-semibold text-gray-800 mb-3">Manuales</h2>
+        <h3 class="text-xl font-semibold text-gray-800 mb-3">Manuales</h3>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600">
             <p><span class="font-medium">:</span> 2025-04-26</p>
         </div>

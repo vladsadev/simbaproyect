@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Equipment;
 use App\Models\Inspection;
 use App\Http\Requests\StoreInspectionRequest;
 use App\Http\Requests\UpdateInspectionRequest;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class InspectionController extends Controller
 {
@@ -13,15 +16,19 @@ class InspectionController extends Controller
      */
     public function index()
     {
-        //
+        return view('inspection.index');
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Equipment $equipment)
     {
-        //
+
+        return view('inspection.create', [
+            'equipment' => $equipment,
+            'user' => Auth::user()
+        ]);
     }
 
     /**

@@ -1,13 +1,13 @@
 <?php
 
 use App\Http\Controllers\EquipmentController;
+use App\Http\Controllers\InspectionController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-//Route::get('/eq', [\App\Http\Controllers\EquipmentController::class, 'index']);
 
 Route::middleware([
     'auth:sanctum',
@@ -18,6 +18,7 @@ Route::middleware([
         return view('dashboard.index');
     })->name('dashboard');
 
+    //Equipos
     Route::get('/catalogo', [EquipmentController::class, 'index'])->name('equipment.index');
     Route::get('/catalogo/crear', [EquipmentController::class, 'create'])->name('equipment.create');
     Route::get('/catalogo/{equipment}/edit', [EquipmentController::class, 'edit'])->name('equipment.edit');
@@ -27,9 +28,10 @@ Route::middleware([
     Route::delete('/catalog/{equipment}', [EquipmentController::class, 'destroy'])->name('equipment.destroy');
 
 
-    Route::get('/inspecciones', function () {
-        return view('inspection.index');
-    })->name('inspecciones');
+    //Inspecciones
+    Route::get('/inspecciones', [InspectionController::class, 'index'])->name('inspection.index');
+    Route::get('/inspecciones/crear/{equipment}', [InspectionController::class, 'create'])->name('inspection.create');
+
 
     Route::get('/malla', function () {
         return view('dashboard.malla');
@@ -43,23 +45,4 @@ Route::middleware([
 
 
 
-
-//Route::get('/jobs/create', [JobController::class, 'create'])->middleware('auth');
-//Route::post('/jobs', [JobController::class, 'store'])->middleware('auth');
-//
-//
-//Route::get('/search', SearchController::class);
-//Route::get('/tags/{tag:name}', TagController::class);
-//
-//
-//Route::middleware('guest')->group(function () {
-//
-//    Route::get('/register', [RegisterUserController::class, 'create']);
-//    Route::post('/register', [RegisterUserController::class, 'store']);
-//
-//    Route::get('/login', [SessionController::class, 'create']);
-//    Route::post('/login', [SessionController::class, 'store']);
-//});
-//
-//Route::delete('/logout', [SessionController::class, 'destroy'])->middleware('auth');
 

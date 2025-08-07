@@ -33,12 +33,8 @@
 
         <!-- Botone(s) de acción-->
         <div class="flex justify-end pt-2 flex-wrap gap-2">
-            <x-link-btn href="{{route('equipment.show',$machine['id'])}}"
-                        class="bg-yellow-light cursor-pointer hover:bg-blue-light text-white text-xs font-semibold py-1.5 px-3
-                        rounded-lg
-                shadow
-                transition">
-                Ver Todo
+            <x-link-btn href="{{route('equipment.show',$machine['id'])}}">
+                Detalles del Equipo
             </x-link-btn>
         </div>
     </div>

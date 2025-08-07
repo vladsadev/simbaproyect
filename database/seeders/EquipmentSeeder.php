@@ -18,17 +18,17 @@ class EquipmentSeeder extends Seeder
         // Crear equipos con especificaciones realistas por tipo
 
         //  Excavadoras con especificaciones de excavadora
-        Equipment::factory(4)
+        Equipment::factory(40)
             ->excavadora()
             ->create(['equipment_type_id' => $excavadora->id]);
 
         //  Camiones con especificaciones de camión
-        Equipment::factory(2)
+        Equipment::factory(200)
             ->camion()
             ->create(['equipment_type_id' => $camion->id]);
 
         //  Perforadoras con especificaciones de perforadora
-        Equipment::factory(4)
+        Equipment::factory(40)
             ->perforadora()
             ->create(['equipment_type_id' => $perforadora->id]);
     }
