@@ -36,6 +36,7 @@ class InspectionController extends Controller
      */
     public function store(StoreInspectionRequest $request)
     {
+        return 'NO llega ';
         //
     }
 
