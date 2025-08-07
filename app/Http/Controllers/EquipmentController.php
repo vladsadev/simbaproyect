@@ -26,7 +26,7 @@ class EquipmentController extends Controller
      */
     public function store(StoreEquipmentRequest $request)
     {
-        // ✅ Crear el equipo con los datos validados
+        // Crear el equipo con los datos validados
         $equipment = Equipment::create($request->validated());
 
         // Redireccionar con mensaje de éxito
@@ -40,7 +40,7 @@ class EquipmentController extends Controller
     {
         $eTypes = EquipmentType::all();
 
-        // ✅ Retornar la vista, no los datos directamente
+        //  Retornar la vista, no los datos directamente
         return view('equipment.create', [
             'eTypes' => $eTypes
         ]);
@@ -58,24 +58,23 @@ class EquipmentController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-//    public function edit(Equipment $equipment)
-//    {
-//        $eTypes = EquipmentType::all();
-//
-//        return view('equipment.edit', [
-//            'equipment' => $equipment,
-//            'eTypes' => $eTypes
-//        ]);
-//    }
+    public function edit(Equipment $equipment)
+    {
+       $eTypes = EquipmentType::all();
+
+        return view('equipment.edit', [
+            'equipment' => $equipment,
+            'eTypes' => $eTypes
+        ]);
+    }
 
     /**
      * Update the specified resource in storage.
      */
     public function update(UpdateEquipmentRequest $request, Equipment $equipment)
     {
-        $equipment->update($request->validated());
 
-        return redirect()->route('equipment.index')->with('success', 'Equipo actualizado exitosamente');
+        return "ok, I'll do";
     }
 
     /**

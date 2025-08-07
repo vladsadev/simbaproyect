@@ -4,10 +4,8 @@
 
         <div class="flex justify-between">
             <h2 class="font-semibold text-xl">
-                Código del Equipo:
-                <span class="text-yellow-main">{{ $equipment->code}} </span>
+                Editar: <span class="text-yellow-main">{{ $equipment->equipmentType->name . ' '.$equipment->model}}  </span>
             </h2>
-
 
             <x-link-btn href="{{route('equipment.index')}}">Volver</x-link-btn>
 

@@ -15,19 +15,22 @@
     <!-- Encabezado -->
     <div class="flex justify-between">
         <div>
-            <h1 class="text-3xl font-bold text-gray-900">{{$equipment->equipmentType->name}} <span
-                    class="text-yellow-500"> {{$equipment->model}}</span></h1>
-            <p class="text-gray-600 mt-1 text-sm lg:text-base">Código: {{$equipment->code}} • Marca: {{$equipment->brand}} •
-                Año:
-                {{$equipment->year}} •
+{{--            <h1 class="text-3xl font-bold text-gray-900">{{$equipment->equipmentType->name}} <span--}}
+{{--                    class="text-yellow-main"> {{$equipment->model}}</span></h1>--}}
+            <h3 class="text-2xl font-bold">
+                Código: {{$equipment->code}}
+            </h3>
+            <p class="text-gray-600 mt-1 text-sm lg:text-base"> Marca: {{$equipment->brand}} •
                 Modelo:
-                {{$equipment->model}}
+                {{$equipment->model}} •
+                Año:
+                {{$equipment->year}}
             </p>
             <p class="text-gray-500 text-xs mt-1">Ubicación: {{$equipment->location}}</p>
         </div>
-        <!-- Acciones -->
+        <!--Botones de Acciones -->
         <div class="flex flex-col gap-2 justify-start items-end text-center">
-            <x-link-btn class="text-center">Editar</x-link-btn>
+            <x-link-btn variant="db" href="{{route('equipment.edit',$equipment)}}" class="text-center">Editar</x-link-btn>
             <x-link-btn>Agendar Mantenimiento</x-link-btn>
         </div>
     </div>
@@ -63,6 +66,7 @@
 
         </p>
     </div>
+
     <!-- Manuales-->
     <div>
         <h2 class="text-xl font-semibold text-gray-800 mb-3">Manuales</h2>

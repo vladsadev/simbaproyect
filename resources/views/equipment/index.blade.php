@@ -14,10 +14,9 @@
         </div>
     </x-slot>
 
-
     <x-panels.main>
 
-        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 p-4 bg-gray-50">
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 bg-gray-50">
             @foreach($equipment as $machine)
 
                 <x-machine.card :$machine/>
@@ -25,7 +24,7 @@
             @endforeach
         </div>
 
-        <div>
+        <div class="mt-2 lg:mt-4">
             {{$equipment->links()}}
         </div>
     </x-panels.main>
