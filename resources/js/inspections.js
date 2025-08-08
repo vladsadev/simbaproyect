@@ -389,6 +389,63 @@ export class InspectionManager {
         this.updateProgress();
         this.updateIssueCounter();
     }
+
+
+    async handleInspectionSubmit(event) {
+        event.preventDefault();
+
+        const form = event.target;
+        const formData = new FormData(form);
+
+        // DEBUG: Ver qué datos se están enviando
+        console.log('Enviando formulario...');
+        for (let [key, value] of formData.entries()) {
+            console.log(`${key}: ${value}`);
+        }
+
+        try {
+            const response = await fetch(form.action || '/inspecciones', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
+                    'Accept': 'application/json',
+                }
+            });
+
+            // DEBUG: Ver la respuesta completa
+            const responseText = await response.text();
+            console.log('Respuesta del servidor:', responseText);
+
+            let data;
+            try {
+                data = JSON.parse(responseText);
+            } catch (e) {
+                console.error('Respuesta no es JSON válido:', responseText);
+                throw new Error('Respuesta inválida del servidor');
+            }
+
+            if (response.ok && data.success) {
+                this.showNotification('success', 'Inspección completada',
+                    'La inspección se ha guardado correctamente.');
+
+                setTimeout(() => {
+                    window.location.href = data.redirect || '/catalogo';
+                }, 1500);
+            } else {
+                throw new Error(data.message || 'Error al enviar la inspección');
+            }
+        } catch (error) {
+            console.error('Error completo:', error);
+            this.showNotification('error', 'Error de conexión',
+                error.message || 'No se pudo enviar la inspección. Por favor, intente nuevamente.');
+        }
+    }
+
+
+
+
+
 }
 
 // Inicializar cuando se importe

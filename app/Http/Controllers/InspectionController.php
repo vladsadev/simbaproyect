@@ -6,6 +6,7 @@ use App\Http\Requests\StoreInspectionRequest;
 use App\Models\Equipment;
 use App\Models\Inspection;
 use App\Http\Requests\UpdateInspectionRequest;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class InspectionController extends Controller
@@ -33,49 +34,62 @@ class InspectionController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(StoreInspectionRequest $request)
     {
         try {
-            $validated = $request->validated();
+            // Si la petición espera JSON (viene de AJAX)
+            if ($request->expectsJson()) {
 
-            // Crear la inspección
-            $inspection = Inspection::create([
-                'equipment_id' => $validated['equipment_id'],
-                'user_id' => Auth::id(),
-                'inspection_date' => now(),
-                'status' => 'completada',
-                'observations' => $validated['observations'] ?? null,
-                // Mapear los checkboxes correctamente
-                'cuchara_checked' => $request->has('cuchara'),
-                'llantas_checked' => $request->has('llantas'),
-                'articulacion_checked' => $request->has('articulacion'),
-                'cilindro_checked' => $request->has('cilindro'),
-                'botellones_checked' => $request->has('botellones'),
-                'zbar_checked' => $request->has('zbar'),
-                'dogbone_checked' => $request->has('dogbone'),
-                'brazo_checked' => $request->has('brazo'),
-                'tablero_checked' => $request->has('tablero'),
-                'extintores_checked' => $request->has('extintores'),
-                'epp_complete' => $request->has('epp'),
-            ]);
+                // Procesar los datos
+                $inspection = Inspection::create([
+                    'equipment_id' => $request->equipment_id,
+                    'user_id' => Auth::id(),
+                    'inspection_date' => Carbon::now(),
+                    'status' => 'completada',
+                    'observations' => $request->observations ?? null,
+                    // Checkboxes - usar nombres exactos del formulario
+                    'cuchara_checked' => $request->has('cuchara'),
+                    'llantas_checked' => $request->has('llantas'),
+                    'articulacion_checked' => $request->has('articulacion'),
+                    'cilindro_checked' => $request->has('cilindro'),
+                    'botellones_checked' => $request->has('botellones'),
+                    'zbar_checked' => $request->has('zbar'),
+                    'dogbone_checked' => $request->has('dogbone'),
+                    'brazo_checked' => $request->has('brazo'),
+                    'tablero_checked' => $request->has('tablero'),
+                    'extintores_checked' => $request->has('extintores'),
+                    'epp_complete' => $request->has('epp'),
+                ]);
 
-            // Si hay problemas reportados (desde sesión temporal o request)
-            if ($request->session()->has('inspection_issues')) {
-                $issues = $request->session()->get('inspection_issues');
-                foreach ($issues as $issue) {
-                    $inspection->issues()->create($issue);
+                // Procesar issues reportados si existen
+                if ($request->has('reported_issues')) {
+                    $issues = json_decode($request->reported_issues, true);
+                    foreach ($issues as $issue) {
+                        // Aquí guardarías los issues cuando tengas el modelo
+                        // $inspection->issues()->create($issue);
+                    }
                 }
-                $request->session()->forget('inspection_issues');
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Inspección guardada exitosamente',
+                    'redirect' => route('equipment.show', $request->equipment_id)
+                ]);
             }
 
-            return redirect()
-                ->route('inspection.show', $inspection)
-                ->with('success', 'Inspección creada exitosamente');
+            // Si no es AJAX, manejo tradicional
+            // ... tu código actual ...
 
         } catch (\Exception $e) {
+            \Log::error('Error en inspección: ' . $e->getMessage());
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Error al guardar la inspección: ' . $e->getMessage()
+                ], 422);
+            }
+
             return redirect()
                 ->back()
                 ->withInput()
@@ -83,26 +97,11 @@ class InspectionController extends Controller
         }
     }
 
+
     /**
      * Display the specified resource.
      */
     public function show(Inspection $inspection)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Inspection $inspection)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateInspectionRequest $request, Inspection $inspection)
     {
         //
     }

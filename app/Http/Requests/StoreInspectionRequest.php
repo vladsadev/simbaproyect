@@ -21,15 +21,11 @@ class StoreInspectionRequest extends FormRequest
     {
         return [
             'equipment_id' => 'required|exists:equipment,id',
-            'inspector_name' => 'required|string|max:255',
-            'work_hours' => 'nullable|numeric|min:0|max:99999',
-            'operator_name' => 'nullable|string|max:255',
-            'inspection_date' => 'required|date',
-            'inspection_items' => 'required|array',
-            'inspection_items.*' => 'required|boolean',
             'observations' => 'nullable|string|max:1000',
-            'total_items' => 'required|integer|min:1',
-            'checked_items' => 'required|integer|min:0',
+            'items' => 'nullable|array',
+            'items.*' => 'nullable',
+            'epp' => 'nullable',
+            'reported_issues' => 'nullable|json'
         ];
     }
 

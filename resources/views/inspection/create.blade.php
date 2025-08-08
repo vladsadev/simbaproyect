@@ -18,8 +18,15 @@
         </div>
         <!-- Formulario Principal de Inspección -->
         <div class="shadow-xl rounded-lg overflow-hidden">
-            <form method="POST" class="p-6 space-y-4" id="inspectionForm" action="{{route('inspection.store')}}">
+            <form id="inspectionForm"
+                  action="{{ route('inspection.store') }}"
+                  method="POST"
+                  class="space-y-6">
                 @csrf
+
+                <!-- Campo oculto para el equipment_id -->
+                <input type="hidden" name="equipment_id" value="{{ $equipment->id }}">
+
                 <div class="grid grid-1 bg-white p-4 gap-4 md:grid-cols-5">
                     <!-- Lado izquierdo -->
                     <div class="md:col-span-3">
@@ -46,7 +53,7 @@
                                     <div class="flex items-center space-x-3">
                                         <input type="checkbox"
                                                id="{{ $key }}"
-                                               name="items[{{ $key }}]"
+                                               name="{{ $key }}"
                                                class="inspection-check w-5 h-5 text-yellow-600 border-gray-300 rounded focus:ring-yellow-500"
                                                data-item="{{ $item }}">
                                         <label for="{{ $key }}" class="text-gray-700 font-medium">{{ $item }}</label>
@@ -129,7 +136,7 @@
                                         </ul>
                                     </div>
                                 </div>
-                                <x-forms.checkbox description="Sí" label="Cumple con todos los EPP" name="epp" required/>
+                                <x-forms.checkbox description="Sí" label="Cumple con todos los EPP" name="epp"/>
                             </div>
                         </div>
                     </div>
