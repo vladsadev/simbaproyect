@@ -13,7 +13,7 @@ if($estado === 'active'){
 
 @endphp
 
-<!-- Imagen principal -->
+    <!-- Imagen principal -->
 <div class="relative">
     <img src="{{Vite::asset('resources/images/simba1.webp')}}" alt="SIMBA S7D" class="w-full h-72 object-cover">
     <span class="absolute top-4 left-4 text-blue-main text-sm md:text-base font-semibold px-4 py-1 rounded-full
@@ -31,13 +31,13 @@ if($estado === 'active'){
             <h2 class="text-2xl font-bold text-yellow-main">
                 Código: {{$equipment->code}}
             </h2>
-            <p class="text-gray-600 mt-1 text-sm lg:text-base"> Marca: {{$equipment->brand}} •
+            <p class="text-gray-600 mt-1 text-sm lg:text-lg"> Marca: {{$equipment->brand}} •
                 Modelo:
                 {{$equipment->model}} •
                 Año:
                 {{$equipment->year}}
             </p>
-            <p class="text-gray-500 text-xs lg:text-base mt-1">Ubicación: {{$equipment->location}}</p>
+            <p class="text-gray-500 text-sm lg:text-lg mt-1">Ubicación: {{$equipment->location}}</p>
         </div>
         <!--Botones de Acción Administrativa -->
         <div class="flex flex-col gap-2 justify-start items-end text-center">
@@ -67,30 +67,30 @@ if($estado === 'active'){
     <!-- Ficha técnica -->
     <div>
         <h3 class="text-xl font-semibold text-gray-800 mb-3">Ficha Técnica</h3>
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm text-gray-700">
-            <p><span class="font-medium">Largo:</span> {{$equipment->length}} m</p>
-            <p><span class="font-medium">Ancho:</span> {{$equipment->width}} m</p>
-            <p><span class="font-medium">Alto:</span>{{$equipment->height}} m</p>
-            <p><span class="font-medium">Peso:</span>{{$equipment->weight}} </p>
-            <p><span class="font-medium">Potencia:</span>{{$equipment->engine_power}} HP</p>
-            <p><span class="font-medium">Combustible:</span>{{$equipment->fuel}} </p>
-            <p><span class="font-medium">Capacidad Combustible:</span>{{$equipment->fuel_capacity}} L</p>
-            <p><span class="font-medium">Capacidad Cuchara:</span>{{$equipment->bucket_capacity}} m³</p>
-            <p><span class="font-medium">Carga Máxima:</span>{{$equipment->max_load}} t</p>
-            <p><span class="font-medium">Total Horas Trabajadas:</span> 5840 h</p>
-            <p><span class="font-medium">Del último mantenimiento:</span> 240 h</p>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm lg:text-base text-gray-700">
+            <p><span class="font-semibold">Largo: </span> {{$equipment->length}} m</p>
+            <p><span class="font-semibold">Ancho: </span> {{$equipment->width}} m</p>
+            <p><span class="font-semibold">Alto: </span> {{$equipment->height}} m</p>
+            <p><span class="font-semibold">Peso: </span> {{$equipment->weight}} </p>
+            <p><span class="font-semibold">Potencia: </span> {{$equipment->engine_power}} HP</p>
+            <p><span class="font-semibold">Combustible: </span> {{$equipment->fuel_type}} </p>
+            <p><span class="font-semibold">Capacidad Combustible: </span> {{$equipment->fuel_capacity}} L</p>
+            <p><span class="font-semibold">Capacidad Cuchara: </span> {{$equipment->bucket_capacity}} m³</p>
+            <p><span class="font-semibold">Carga Máxima: </span> {{$equipment->max_load}} t</p>
+            <p><span class="font-semibold">Total Horas Trabajadas: </span> 5840 h</p>
+            <p><span class="font-semibold">Del último mantenimiento: </span> 240 h</p>
         </div>
     </div>
 
     <!-- Mantenimiento -->
     <div>
         <h3 class="text-xl font-semibold text-gray-800 mb-3">Mantenimiento</h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600">
-            <p><span class="font-medium">Último Mantenimiento:</span> 2025-04-26</p>
-            <p><span class="font-medium">Próximo Mantenimiento:</span> 2025-07-07</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-base  text-gray-600">
+            <p><span class="font-semibold">Último Mantenimiento:</span> 2025-04-26</p>
+            <p><span class="font-semibold">Próximo Mantenimiento:</span> 2025-07-07</p>
         </div>
-        <p class="mt-3 text-gray-600 text-sm">
-            <span class="font-medium">Notas:</span> Equipo en condiciones óptimas. En el próximo mantenimiento se recomienda
+        <p class="mt-3 text-gray-600 text-sm lg:text-base">
+            <span class="font-semibold">Notas:</span> Equipo en condiciones óptimas. En el próximo mantenimiento se recomienda
             revisión del sistema hidráulico y cambiar las mangueras de presión de ...
 
         </p>
@@ -100,7 +100,7 @@ if($estado === 'active'){
     <div>
         <h3 class="text-xl font-semibold text-gray-800 mb-3">Manuales</h3>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600">
-            <p><span class="font-medium">:</span> 2025-04-26</p>
+            <p><span class="font-semibold">:</span> 2025-04-26</p>
         </div>
     </div>
 

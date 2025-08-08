@@ -1,44 +1,130 @@
 // Archivo: resources/js/inspections.js
 
-class InspectionManager {
+export class InspectionManager {
     constructor() {
         this.checkedItems = 0;
-        this.totalItems = 0;
+        this.totalItems = 10;
         this.init();
     }
 
     init() {
-        this.bindFormEvents();
-        this.initializeInspectionItems();
-        this.updateProgress();
-    }
-
-    initializeInspectionItems() {
-        const checkboxes = document.querySelectorAll('input[type="checkbox"][name^="inspection_items"]');
-        this.totalItems = checkboxes.length;
-
-        checkboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', (e) => this.handleItemCheck(e));
+        // Ejecutar cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', () => {
+            this.bindEvents();
         });
     }
 
-    handleItemCheck(event) {
-        if (event.target.checked) {
+    bindEvents() {
+        // Manejar checkboxes de inspección
+        const checkboxes = document.querySelectorAll('.inspection-check');
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', (e) => this.handleCheckboxChange(e));
+        });
+
+        // Manejar botones de problema
+        const issueButtons = document.querySelectorAll('.issue-btn');
+        issueButtons.forEach(button => {
+            button.addEventListener('click', (e) => this.handleIssueReport(e));
+        });
+
+        // Manejar modal
+        const closeButtons = document.querySelectorAll('.close-modal');
+        closeButtons.forEach(button => {
+            button.addEventListener('click', () => this.closeIssueModal());
+        });
+
+        // Cerrar modal al hacer clic fuera
+        const modal = document.getElementById('issueModal');
+        if (modal) {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    this.closeIssueModal();
+                }
+            });
+        }
+
+        // Manejar formularios
+        this.bindFormEvents();
+    }
+
+    handleCheckboxChange(event) {
+        const checkbox = event.target;
+        const container = checkbox.closest('.inspection-item');
+        const issueBtn = container.querySelector('.issue-btn');
+
+        if (checkbox.checked) {
             this.checkedItems++;
+            issueBtn.classList.add('hidden');
+            container.classList.remove('with-issue');
+            container.classList.add('checked');
         } else {
             this.checkedItems--;
+            issueBtn.classList.remove('hidden');
+            container.classList.remove('checked');
+            container.classList.add('with-issue');
         }
+
         this.updateProgress();
     }
 
     updateProgress() {
+        const percentage = (this.checkedItems / this.totalItems) * 100;
         const progressBar = document.querySelector('.progress-bar');
         const progressText = document.querySelector('.progress-text');
 
-        if (progressBar && progressText) {
-            const percentage = this.totalItems > 0 ? (this.checkedItems / this.totalItems) * 100 : 0;
-            progressBar.style.width = `${percentage}%`;
+        if (progressBar) {
+            progressBar.style.width = percentage + '%';
+
+            // Cambiar clase según el progreso
+            progressBar.classList.remove('low', 'medium', 'high');
+            if (percentage < 50) {
+                progressBar.classList.add('low');
+            } else if (percentage < 80) {
+                progressBar.classList.add('medium');
+            } else {
+                progressBar.classList.add('high');
+            }
+        }
+
+        if (progressText) {
             progressText.textContent = `${this.checkedItems}/${this.totalItems}`;
+        }
+    }
+
+    handleIssueReport(event) {
+        event.preventDefault();
+        const button = event.target.closest('.issue-btn');
+        const itemText = button.getAttribute('data-item');
+        this.openIssueModal(itemText);
+    }
+
+    openIssueModal(componentName) {
+        const modal = document.getElementById('issueModal');
+        const componentInput = document.getElementById('modalComponent');
+
+        if (componentInput) {
+            componentInput.value = componentName;
+        }
+
+        if (modal) {
+            modal.classList.remove('hidden');
+            modal.classList.add('fade-in');
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    closeIssueModal() {
+        const modal = document.getElementById('issueModal');
+        if (modal) {
+            modal.classList.add('hidden');
+            modal.classList.remove('fade-in');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Limpiar formulario
+        const form = document.getElementById('issueForm');
+        if (form) {
+            form.reset();
         }
     }
 
@@ -67,6 +153,8 @@ class InspectionManager {
 
         if (this.checkedItems === this.totalItems) {
             this.showNotification('success', 'Inspección completada exitosamente', 'Todos los elementos han sido revisados y están en buen estado.');
+
+            // Aquí puedes enviar los datos al servidor
             this.submitInspectionData(event.target);
         } else {
             const remaining = this.totalItems - this.checkedItems;
@@ -74,49 +162,6 @@ class InspectionManager {
                 this.showNotification('warning', 'Inspección guardada con elementos pendientes');
                 this.submitInspectionData(event.target);
             }
-        }
-    }
-
-    async submitInspectionData(form) {
-        try {
-            const formData = new FormData(form);
-
-            // Agregar datos adicionales
-            formData.append('total_items', this.totalItems);
-            formData.append('checked_items', this.checkedItems);
-
-            // Obtener el token CSRF
-            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-
-            const response = await fetch('/inspecciones', {  // Cambio de ruta
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRF-TOKEN': csrfToken,
-                    'Accept': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            });
-
-            const result = await response.json();
-
-            if (response.ok && result.success) {
-                this.showNotification('success', 'Inspección enviada exitosamente', result.message);
-
-                // Redirigir después de un breve delay
-                setTimeout(() => {
-                    if (result.redirect) {
-                        window.location.href = result.redirect;
-                    } else {
-                        window.location.href = '/inspecciones';
-                    }
-                }, 1500);
-            } else {
-                throw new Error(result.message || 'Error al enviar inspección');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            this.showNotification('error', 'Error de conexión', error.message || 'No se pudo enviar la inspección');
         }
     }
 
@@ -142,6 +187,45 @@ class InspectionManager {
         event.target.reset();
     }
 
+    handleIssueSubmit(event) {
+        event.preventDefault();
+
+        const formData = new FormData(event.target);
+        const componente = formData.get('componente');
+        const severidad = formData.get('severidad');
+
+        this.showNotification('success', 'Problema reportado', `Componente: ${componente} - Severidad: ${severidad}`);
+
+        // Enviar datos al servidor
+        this.submitIssueData(formData);
+
+        // Cerrar modal
+        this.closeIssueModal();
+    }
+
+    async submitInspectionData(form) {
+        try {
+            const formData = new FormData(form);
+
+            const response = await fetch('/api/inspections', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            });
+
+            if (response.ok) {
+                console.log('Inspección enviada exitosamente');
+            } else {
+                throw new Error('Error al enviar inspección');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            this.showNotification('error', 'Error de conexión', 'No se pudo enviar la inspección');
+        }
+    }
+
     async submitMaintenanceData(formData) {
         try {
             const response = await fetch('/api/maintenance', {
@@ -161,22 +245,6 @@ class InspectionManager {
             console.error('Error:', error);
             this.showNotification('error', 'Error de conexión', 'No se pudo agendar el mantenimiento');
         }
-    }
-
-    handleIssueSubmit(event) {
-        event.preventDefault();
-
-        const formData = new FormData(event.target);
-        const componente = formData.get('componente');
-        const severidad = formData.get('severidad');
-
-        this.showNotification('success', 'Problema reportado', `Componente: ${componente} - Severidad: ${severidad}`);
-
-        // Enviar datos al servidor
-        this.submitIssueData(formData);
-
-        // Cerrar modal
-        this.closeIssueModal();
     }
 
     async submitIssueData(formData) {
@@ -241,38 +309,7 @@ class InspectionManager {
         }, 5000);
     }
 
-    // Métodos para modales de problemas
-    openIssueModal(componentName = '') {
-        const modal = document.getElementById('issueModal');
-        const componentInput = document.getElementById('componentInput');
-
-        if (componentInput) {
-            componentInput.value = componentName;
-        }
-
-        if (modal) {
-            modal.classList.remove('hidden');
-            modal.classList.add('fade-in');
-            document.body.style.overflow = 'hidden';
-        }
-    }
-
-    closeIssueModal() {
-        const modal = document.getElementById('issueModal');
-        if (modal) {
-            modal.classList.add('hidden');
-            modal.classList.remove('fade-in');
-            document.body.style.overflow = 'auto';
-        }
-
-        // Limpiar formulario
-        const form = document.getElementById('issueForm');
-        if (form) {
-            form.reset();
-        }
-    }
-
-    // Método estático para instancia singleton
+    // Métodos utilitarios
     static getInstance() {
         if (!this.instance) {
             this.instance = new InspectionManager();
@@ -288,12 +325,5 @@ window.initInspections = function() {
 
 // Auto-inicializar si el script se carga directamente
 if (typeof window !== 'undefined') {
-    // Esperar a que el DOM esté listo
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => {
-            window.initInspections();
-        });
-    } else {
-        window.initInspections();
-    }
+    window.initInspections();
 }

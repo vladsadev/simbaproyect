@@ -1,13 +1,26 @@
 @props(['machine'])
 
+@php
+    $estado= $machine->status;
+
+if($estado === 'active'){
+    $classes = 'bg-green-300';
+}else{
+    $classes = 'bg-red-300';
+}
+@endphp
+
+
+
+
 <div class="bg-white rounded-xl shadow-md border border-yellow-300 overflow-hidden hover:shadow-lg transition">
     <!-- Imagen -->
     <div class="relative">
         <img src="{{Vite::asset('resources/images/simba1.webp')}}" alt="SIMBA S7D" class="w-full h-40 object-cover">
-        <span
-            class="absolute top-2 left-2 bg-green-200 text-green-700 text-xs font-semibold px-3 py-1 rounded-full shadow">
-                        Operativa
-                    </span>
+        <span class="absolute top-4 left-4 text-blue-main text-sm md:text-base font-semibold px-4 py-1 rounded-full
+    shadow {{$classes}}">
+        {{__($machine->status)}}
+    </span>
     </div>
 
     <!-- Contenido -->

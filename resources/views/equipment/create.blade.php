@@ -50,7 +50,7 @@
             </div>
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <x-forms.input label="Capacidad de Cuchara" name="bucket_capacity" placeholder="6.5"/>
-                <x-forms.input label="Combustible" name="fuel" placeholder="Diesel"/>
+                <x-forms.input label="Combustible" name="fuel_type" placeholder="Diesel"/>
                 <x-forms.input label="Capacidad de Combustible" name="fuel_capacity" placeholder="400"/>
             </div>
 
