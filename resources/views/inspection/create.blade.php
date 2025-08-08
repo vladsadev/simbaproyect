@@ -18,7 +18,7 @@
         </div>
         <!-- Formulario Principal de Inspección -->
         <div class="shadow-xl rounded-lg overflow-hidden">
-            <form method="POST" action="" class="p-6 space-y-4" id="inspectionForm" action="">
+            <form method="POST" class="p-6 space-y-4" id="inspectionForm" action="{{route('inspection.store')}}">
                 @csrf
                 <div class="grid grid-1 bg-white p-4 gap-4 md:grid-cols-5">
                     <!-- Lado izquierdo -->
@@ -129,7 +129,7 @@
                                         </ul>
                                     </div>
                                 </div>
-                                <x-forms.checkbox description="Sí" label="Cumple con todos los EPP" name="epp"/>
+                                <x-forms.checkbox description="Sí" label="Cumple con todos los EPP" name="epp" required/>
                             </div>
                         </div>
                     </div>
@@ -146,7 +146,7 @@
                               placeholder="Ingrese observaciones adicionales sobre la inspección..."></textarea>
                 </div>
 
-                <!-- Botones de Acción -->
+                <!-- En la sección de botones de acción -->
                 <div class="flex justify-between items-center pt-6 border-t border-gray-200">
                     <div class="flex items-center space-x-4">
                         <!-- Progreso existente -->
@@ -162,7 +162,9 @@
                         <!-- Contador de problemas (NUEVO) -->
                         <div class="flex items-center space-x-2 text-sm text-red-600">
                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                <path fill-rule="evenodd"
+                                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                                      clip-rule="evenodd"/>
                             </svg>
                             <span>Problemas: <span class="issue-counter font-bold">0</span></span>
                         </div>

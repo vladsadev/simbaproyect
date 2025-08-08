@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\EquipmentController;
 use App\Http\Controllers\InspectionController;
+use App\Http\Controllers\InspectionIssueController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {

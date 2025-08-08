@@ -33,26 +33,4 @@ class InspectionIssue extends Model
     {
         return $this->belongsTo(User::class);
     }
-
-
-    public function issues()
-    {
-        return $this->hasMany(InspectionIssue::class);
-    }
-
-// Útil para saber si tiene problemas
-    public function hasIssues()
-    {
-        return $this->issues()->exists();
-    }
-
-// Para obtener el conteo
-    public function issuesCount()
-    {
-        return $this->issues()->count();
-    }
-
-
 }
-
-

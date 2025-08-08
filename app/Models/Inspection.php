@@ -153,6 +153,7 @@ class Inspection extends Model
 
         return array_keys(array_filter($this->inspection_items, fn($value) => $value));
     }
+
     /**
      * Método para verificar si la inspección está completa
      */
@@ -172,4 +173,24 @@ class Inspection extends Model
 
         return array_keys(array_filter($this->inspection_items, fn($value) => !$value));
     }
+
+    public function hasIssues()
+    {
+        return $this->issues()->exists();
+    }
+
+// Útil para saber si tiene problemas
+
+    public function issues()
+    {
+        return $this->hasMany(InspectionIssue::class);
+    }
+
+// Para obtener el conteo
+
+    public function issuesCount()
+    {
+        return $this->issues()->count();
+    }
+
 }
