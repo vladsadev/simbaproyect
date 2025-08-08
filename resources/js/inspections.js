@@ -4,14 +4,17 @@ export class InspectionManager {
     constructor() {
         this.checkedItems = 0;
         this.totalItems = 10;
+        this.reportedIssues = new Map(); // Almacenar problemas reportados temporalmente
         this.init();
     }
 
     init() {
         // Ejecutar cuando el DOM esté listo
-        document.addEventListener('DOMContentLoaded', () => {
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => this.bindEvents());
+        } else {
             this.bindEvents();
-        });
+        }
     }
 
     bindEvents() {
@@ -27,10 +30,12 @@ export class InspectionManager {
             button.addEventListener('click', (e) => this.handleIssueReport(e));
         });
 
-        // Manejar modal
-        const closeButtons = document.querySelectorAll('.close-modal');
-        closeButtons.forEach(button => {
-            button.addEventListener('click', () => this.closeIssueModal());
+        // Manejar modal - Delegación de eventos para mejor rendimiento
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('close-modal') ||
+                e.target.closest('.close-modal')) {
+                this.closeIssueModal();
+            }
         });
 
         // Cerrar modal al hacer clic fuera
@@ -38,6 +43,13 @@ export class InspectionManager {
         if (modal) {
             modal.addEventListener('click', (e) => {
                 if (e.target === modal) {
+                    this.closeIssueModal();
+                }
+            });
+
+            // Cerrar con ESC
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
                     this.closeIssueModal();
                 }
             });
@@ -50,34 +62,48 @@ export class InspectionManager {
     handleCheckboxChange(event) {
         const checkbox = event.target;
         const container = checkbox.closest('.inspection-item');
-        const issueBtn = container.querySelector('.issue-btn');
+        const issueBtn = container?.querySelector('.issue-btn');
+
+        if (!container) return;
 
         if (checkbox.checked) {
             this.checkedItems++;
-            issueBtn.classList.add('hidden');
-            container.classList.remove('with-issue');
             container.classList.add('checked');
+            container.classList.remove('with-issue');
+
+            // Si está marcado como OK, eliminar cualquier issue reportado
+            const componentName = container.querySelector('label').textContent.trim();
+            this.reportedIssues.delete(componentName);
+
+            // Ocultar botón de problema
+            if (issueBtn) {
+                issueBtn.style.display = 'none';
+            }
         } else {
-            this.checkedItems--;
-            issueBtn.classList.remove('hidden');
+            this.checkedItems = Math.max(0, this.checkedItems - 1);
             container.classList.remove('checked');
-            container.classList.add('with-issue');
+
+            // Mostrar botón de problema
+            if (issueBtn) {
+                issueBtn.style.display = 'inline-flex';
+            }
         }
 
         this.updateProgress();
     }
 
     updateProgress() {
-        const percentage = (this.checkedItems / this.totalItems) * 100;
         const progressBar = document.querySelector('.progress-bar');
         const progressText = document.querySelector('.progress-text');
 
-        if (progressBar) {
-            progressBar.style.width = percentage + '%';
+        if (progressBar && progressText) {
+            const percentage = (this.checkedItems / this.totalItems) * 100;
+            progressBar.style.width = `${percentage}%`;
+            progressText.textContent = `${this.checkedItems}/${this.totalItems}`;
 
-            // Cambiar clase según el progreso
+            // Cambiar color según progreso
             progressBar.classList.remove('low', 'medium', 'high');
-            if (percentage < 50) {
+            if (percentage < 40) {
                 progressBar.classList.add('low');
             } else if (percentage < 80) {
                 progressBar.classList.add('medium');
@@ -85,17 +111,17 @@ export class InspectionManager {
                 progressBar.classList.add('high');
             }
         }
-
-        if (progressText) {
-            progressText.textContent = `${this.checkedItems}/${this.totalItems}`;
-        }
     }
 
     handleIssueReport(event) {
         event.preventDefault();
-        const button = event.target.closest('.issue-btn');
-        const itemText = button.getAttribute('data-item');
-        this.openIssueModal(itemText);
+        const button = event.currentTarget;
+        const container = button.closest('.inspection-item');
+
+        if (!container) return;
+
+        const componentName = container.querySelector('label')?.textContent.trim();
+        this.openIssueModal(componentName);
     }
 
     openIssueModal(componentName) {
@@ -110,6 +136,12 @@ export class InspectionManager {
             modal.classList.remove('hidden');
             modal.classList.add('fade-in');
             document.body.style.overflow = 'hidden';
+
+            // Focus en el primer campo seleccionable
+            setTimeout(() => {
+                const firstSelect = modal.querySelector('select');
+                if (firstSelect) firstSelect.focus();
+            }, 100);
         }
     }
 
@@ -129,16 +161,10 @@ export class InspectionManager {
     }
 
     bindFormEvents() {
-        // Formulario de inspección
+        // Formulario de inspección principal
         const inspectionForm = document.getElementById('inspectionForm');
         if (inspectionForm) {
             inspectionForm.addEventListener('submit', (e) => this.handleInspectionSubmit(e));
-        }
-
-        // Formulario de mantenimiento
-        const maintenanceForm = document.getElementById('maintenanceForm');
-        if (maintenanceForm) {
-            maintenanceForm.addEventListener('submit', (e) => this.handleMaintenanceSubmit(e));
         }
 
         // Formulario de reporte de problemas
@@ -148,132 +174,158 @@ export class InspectionManager {
         }
     }
 
-    handleInspectionSubmit(event) {
+    async handleInspectionSubmit(event) {
         event.preventDefault();
 
-        if (this.checkedItems === this.totalItems) {
-            this.showNotification('success', 'Inspección completada exitosamente', 'Todos los elementos han sido revisados y están en buen estado.');
+        const form = event.target;
+        const formData = new FormData(form);
 
-            // Aquí puedes enviar los datos al servidor
-            this.submitInspectionData(event.target);
-        } else {
-            const remaining = this.totalItems - this.checkedItems;
-            if (confirm(`⚠️ Inspección incompleta!\n\nQuedan ${remaining} elementos por revisar.\n¿Desea continuar de todas formas?`)) {
-                this.showNotification('warning', 'Inspección guardada con elementos pendientes');
-                this.submitInspectionData(event.target);
-            }
+        // Agregar los issues reportados al formulario
+        if (this.reportedIssues.size > 0) {
+            const issuesArray = Array.from(this.reportedIssues.values());
+            formData.append('reported_issues', JSON.stringify(issuesArray));
         }
-    }
 
-    handleMaintenanceSubmit(event) {
-        event.preventDefault();
-
-        const formData = new FormData(event.target);
-        const tipo = formData.get('tipo');
-        const fecha = formData.get('fecha');
-        const hora = formData.get('hora');
-
-        if (!fecha || !hora) {
-            this.showNotification('error', 'Error de validación', 'Por favor complete todos los campos requeridos');
+        // Validación básica
+        if (this.checkedItems === 0 && this.reportedIssues.size === 0) {
+            this.showNotification('warning', 'Inspección incompleta',
+                'Debe revisar al menos un elemento o reportar problemas encontrados.');
             return;
         }
 
-        this.showNotification('success', 'Mantenimiento agendado exitosamente', `Tipo: ${tipo} - Fecha: ${fecha} - Hora: ${hora}`);
+        try {
+            // Mostrar indicador de carga
+            this.showLoadingState(form);
 
-        // Enviar datos al servidor
-        this.submitMaintenanceData(formData);
+            const response = await fetch(form.action || '/inspecciones', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
+                    'Accept': 'application/json',
+                }
+            });
 
-        // Limpiar formulario
-        event.target.reset();
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+                this.showNotification('success', 'Inspección completada',
+                    `${this.checkedItems} elementos revisados, ${this.reportedIssues.size} problemas reportados.`);
+
+                // Redireccionar después de un breve delay
+                setTimeout(() => {
+                    window.location.href = data.redirect || '/inspecciones';
+                }, 1500);
+            } else {
+                throw new Error(data.message || 'Error al enviar la inspección');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            this.showNotification('error', 'Error de conexión',
+                'No se pudo enviar la inspección. Por favor, intente nuevamente.');
+            this.hideLoadingState(form);
+        }
     }
 
-    handleIssueSubmit(event) {
+    async handleIssueSubmit(event) {
         event.preventDefault();
 
-        const formData = new FormData(event.target);
-        const componente = formData.get('componente');
-        const severidad = formData.get('severidad');
+        const form = event.target;
+        const formData = new FormData(form);
 
-        this.showNotification('success', 'Problema reportado', `Componente: ${componente} - Severidad: ${severidad}`);
+        // Obtener el nombre del componente
+        const componentName = formData.get('componente');
 
-        // Enviar datos al servidor
-        this.submitIssueData(formData);
+        // Crear objeto con los datos del problema
+        const issueData = {
+            componente: componentName,
+            tipo_problema: formData.get('tipo_problema'),
+            severidad: formData.get('severidad'),
+            descripcion: formData.get('descripcion'),
+            accion_recomendada: formData.get('accion_recomendada'),
+            timestamp: new Date().toISOString()
+        };
+
+        // Almacenar temporalmente en memoria
+        this.reportedIssues.set(componentName, issueData);
+
+        // Marcar visualmente el componente con problema
+        this.markComponentWithIssue(componentName);
+
+        // Mostrar notificación
+        this.showNotification('warning', 'Problema reportado',
+            `Se ha registrado un problema en: ${componentName}`);
 
         // Cerrar modal
         this.closeIssueModal();
+
+        // Actualizar contador de elementos con problemas
+        this.updateIssueCounter();
     }
 
-    async submitInspectionData(form) {
-        try {
-            const formData = new FormData(form);
+    markComponentWithIssue(componentName) {
+        const items = document.querySelectorAll('.inspection-item');
+        items.forEach(item => {
+            const label = item.querySelector('label');
+            if (label && label.textContent.trim() === componentName) {
+                item.classList.add('with-issue');
+                item.classList.remove('checked');
 
-            const response = await fetch('/api/inspections', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                // Desmarcar el checkbox si estaba marcado
+                const checkbox = item.querySelector('.inspection-check');
+                if (checkbox && checkbox.checked) {
+                    checkbox.checked = false;
+                    this.checkedItems = Math.max(0, this.checkedItems - 1);
+                    this.updateProgress();
                 }
-            });
 
-            if (response.ok) {
-                console.log('Inspección enviada exitosamente');
-            } else {
-                throw new Error('Error al enviar inspección');
+                // Cambiar el ícono de advertencia
+                const warningIcon = item.querySelector('.issue-btn');
+                if (warningIcon) {
+                    warningIcon.classList.add('bg-red-600', 'hover:bg-red-700');
+                    warningIcon.classList.remove('bg-yellow-500', 'hover:bg-yellow-600');
+                }
             }
-        } catch (error) {
-            console.error('Error:', error);
-            this.showNotification('error', 'Error de conexión', 'No se pudo enviar la inspección');
+        });
+    }
+
+    updateIssueCounter() {
+        // Actualizar un contador visual de problemas si existe
+        const issueCounter = document.querySelector('.issue-counter');
+        if (issueCounter) {
+            issueCounter.textContent = this.reportedIssues.size;
+            issueCounter.classList.toggle('hidden', this.reportedIssues.size === 0);
         }
     }
 
-    async submitMaintenanceData(formData) {
-        try {
-            const response = await fetch('/api/maintenance', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                }
-            });
-
-            if (response.ok) {
-                console.log('Mantenimiento agendado exitosamente');
-            } else {
-                throw new Error('Error al agendar mantenimiento');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            this.showNotification('error', 'Error de conexión', 'No se pudo agendar el mantenimiento');
+    showLoadingState(form) {
+        const submitBtn = form.querySelector('button[type="submit"]');
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `
+                <svg class="animate-spin h-5 w-5 mr-2 inline" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                </svg>
+                Enviando...
+            `;
         }
     }
 
-    async submitIssueData(formData) {
-        try {
-            const response = await fetch('/api/issues', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                }
-            });
-
-            if (response.ok) {
-                console.log('Problema reportado exitosamente');
-            } else {
-                throw new Error('Error al reportar problema');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            this.showNotification('error', 'Error de conexión', 'No se pudo reportar el problema');
+    hideLoadingState(form) {
+        const submitBtn = form.querySelector('button[type="submit"]');
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = 'Confirmar Inspección';
         }
     }
 
-    showNotification(type, title, message = '') {
-        // Crear elemento de notificación
+    showNotification(type, title, message) {
+        // Crear notificación temporal
         const notification = document.createElement('div');
-        notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg max-w-sm fade-in`;
+        notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 max-w-sm transform transition-all duration-300 translate-x-full`;
 
-        // Definir colores según el tipo
+        // Colores según el tipo
         const colors = {
             success: 'bg-green-500 text-white',
             error: 'bg-red-500 text-white',
@@ -281,49 +333,65 @@ export class InspectionManager {
             info: 'bg-blue-500 text-white'
         };
 
-        notification.className += ` ${colors[type] || colors.info}`;
+        notification.classList.add(...colors[type].split(' '));
 
-        // Contenido HTML
         notification.innerHTML = `
             <div class="flex items-start">
                 <div class="flex-1">
-                    <h4 class="font-semibold">${title}</h4>
-                    ${message ? `<p class="text-sm mt-1">${message}</p>` : ''}
+                    <p class="font-semibold">${title}</p>
+                    <p class="text-sm mt-1">${message}</p>
                 </div>
-                <button class="ml-4 text-white hover:text-gray-200" onclick="this.parentElement.parentElement.remove()">
-                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                <button onclick="this.closest('.fixed').remove()" class="ml-4 text-white hover:text-gray-200">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
                 </button>
             </div>
         `;
 
-        // Agregar al DOM
         document.body.appendChild(notification);
 
-        // Auto-remover después de 5 segundos
+        // Animar entrada
         setTimeout(() => {
-            if (notification.parentElement) {
-                notification.remove();
-            }
+            notification.classList.remove('translate-x-full');
+            notification.classList.add('translate-x-0');
+        }, 100);
+
+        // Auto-eliminar después de 5 segundos
+        setTimeout(() => {
+            notification.classList.add('translate-x-full');
+            setTimeout(() => notification.remove(), 300);
         }, 5000);
     }
 
-    // Métodos utilitarios
-    static getInstance() {
-        if (!this.instance) {
-            this.instance = new InspectionManager();
-        }
-        return this.instance;
+    // Método para obtener el resumen de la inspección
+    getInspectionSummary() {
+        return {
+            totalItems: this.totalItems,
+            checkedItems: this.checkedItems,
+            reportedIssues: Array.from(this.reportedIssues.values()),
+            completionPercentage: (this.checkedItems / this.totalItems) * 100,
+            hasIssues: this.reportedIssues.size > 0
+        };
+    }
+
+    // Método para resetear la inspección
+    resetInspection() {
+        this.checkedItems = 0;
+        this.reportedIssues.clear();
+
+        // Resetear UI
+        document.querySelectorAll('.inspection-check').forEach(cb => cb.checked = false);
+        document.querySelectorAll('.inspection-item').forEach(item => {
+            item.classList.remove('checked', 'with-issue');
+        });
+
+        this.updateProgress();
+        this.updateIssueCounter();
     }
 }
 
-// Función de inicialización global
-window.initInspections = function() {
-    return InspectionManager.getInstance();
-};
-
-// Auto-inicializar si el script se carga directamente
-if (typeof window !== 'undefined') {
-    window.initInspections();
-}
+// Inicializar cuando se importe
+document.addEventListener('DOMContentLoaded', () => {
+    window.inspectionManager = new InspectionManager();
+});

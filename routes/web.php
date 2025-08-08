@@ -30,9 +30,16 @@ Route::middleware([
 
     //Inspecciones
     Route::get('/inspecciones', [InspectionController::class, 'index'])->name('inspection.index');
-
     Route::get('/inspecciones/crear/{equipment}', [InspectionController::class, 'create'])->name('inspection.create');
     Route::post('/inspecciones', [InspectionController::class, 'store'])->name('inspection.store');
+
+
+    // Inspecciones - Issues
+    Route::post('/api/inspection-issues/temporary', [InspectionIssueController::class, 'storeTemporary'])
+        ->name('inspection.issues.temporary');
+    Route::post('/api/inspection-issues', [InspectionIssueController::class, 'store'])
+        ->name('inspection.issues.store');
+
 
     Route::get('/malla', function () {
         return view('dashboard.malla');

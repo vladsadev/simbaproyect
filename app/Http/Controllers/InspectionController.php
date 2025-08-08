@@ -39,14 +39,16 @@ class InspectionController extends Controller
     public function store(StoreInspectionRequest $request)
     {
         try {
-            // Crear la inspección con los datos validados
+            $validated = $request->validated();
+
+            // Crear la inspección
             $inspection = Inspection::create([
-                'equipment_id' => $request->validated()['equipment_id'],
-                'user_id' => Auth::id(), // Obtener el ID del usuario autenticado
-                'inspection_date' => Carbon::now(),
-                'status' => 'completada', // o el estado que manejes
-                'observations' => $request->validated()['observations'] ?? null,
-                // Agregar los campos de checklist
+                'equipment_id' => $validated['equipment_id'],
+                'user_id' => Auth::id(),
+                'inspection_date' => now(),
+                'status' => 'completada',
+                'observations' => $validated['observations'] ?? null,
+                // Mapear los checkboxes correctamente
                 'cuchara_checked' => $request->has('cuchara'),
                 'llantas_checked' => $request->has('llantas'),
                 'articulacion_checked' => $request->has('articulacion'),
@@ -57,9 +59,17 @@ class InspectionController extends Controller
                 'brazo_checked' => $request->has('brazo'),
                 'tablero_checked' => $request->has('tablero'),
                 'extintores_checked' => $request->has('extintores'),
-                // EPP
-                'epp_complete' => $request->has('epp_complete'),
+                'epp_complete' => $request->has('epp'),
             ]);
+
+            // Si hay problemas reportados (desde sesión temporal o request)
+            if ($request->session()->has('inspection_issues')) {
+                $issues = $request->session()->get('inspection_issues');
+                foreach ($issues as $issue) {
+                    $inspection->issues()->create($issue);
+                }
+                $request->session()->forget('inspection_issues');
+            }
 
             return redirect()
                 ->route('inspection.show', $inspection)

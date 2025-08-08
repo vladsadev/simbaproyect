@@ -148,13 +148,24 @@
 
                 <!-- Botones de Acción -->
                 <div class="flex justify-between items-center pt-6 border-t border-gray-200">
-                    <div class="flex items-center space-x-2 text-sm text-gray-600">
-                        <span>Progreso:</span>
-                        <div class="w-32 bg-gray-200 rounded-full h-2">
-                            <div class="progress-bar bg-yellow-600 h-2 rounded-full transition-all duration-300"
-                                 style="width: 0%"></div>
+                    <div class="flex items-center space-x-4">
+                        <!-- Progreso existente -->
+                        <div class="flex items-center space-x-2 text-sm text-gray-600">
+                            <span>Progreso:</span>
+                            <div class="w-32 bg-gray-200 rounded-full h-2">
+                                <div class="progress-bar bg-yellow-600 h-2 rounded-full transition-all duration-300"
+                                     style="width: 0%"></div>
+                            </div>
+                            <span class="progress-text">0/10</span>
                         </div>
-                        <span class="progress-text">0/10</span>
+
+                        <!-- Contador de problemas (NUEVO) -->
+                        <div class="flex items-center space-x-2 text-sm text-red-600">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                            </svg>
+                            <span>Problemas: <span class="issue-counter font-bold">0</span></span>
+                        </div>
                     </div>
 
                     <div class="flex space-x-3">
