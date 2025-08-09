@@ -37,7 +37,6 @@ class InspectionController extends Controller
     public function store(StoreInspectionRequest $request)
     {
         try {
-            // Si la petición espera JSON (viene de AJAX)
             if ($request->expectsJson()) {
 
                 // Procesar los datos
@@ -47,7 +46,6 @@ class InspectionController extends Controller
                     'inspection_date' => Carbon::now(),
                     'status' => 'completada',
                     'observations' => $request->observations ?? null,
-                    // Checkboxes - usar nombres exactos del formulario
                     'cuchara_checked' => $request->has('cuchara'),
                     'llantas_checked' => $request->has('llantas'),
                     'articulacion_checked' => $request->has('articulacion'),
@@ -65,8 +63,7 @@ class InspectionController extends Controller
                 if ($request->has('reported_issues')) {
                     $issues = json_decode($request->reported_issues, true);
                     foreach ($issues as $issue) {
-                        // Aquí guardarías los issues cuando tengas el modelo
-                        // $inspection->issues()->create($issue);
+                         $inspection->issues()->create($issue);
                     }
                 }
 
@@ -77,8 +74,6 @@ class InspectionController extends Controller
                 ]);
             }
 
-            // Si no es AJAX, manejo tradicional
-            // ... tu código actual ...
 
         } catch (\Exception $e) {
             \Log::error('Error en inspección: ' . $e->getMessage());

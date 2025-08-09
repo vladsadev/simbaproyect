@@ -12,23 +12,30 @@ class Inspection extends Model
 
     protected $fillable = [
         'equipment_id',
-        'inspector_name',
-        'work_hours',
-        'operator_name',
+        'user_id',
         'inspection_date',
-        'inspection_items',
         'status',
         'observations',
-        'total_items',
-        'checked_items',
-        'completion_percentage',
+        'cuchara_checked',
+        'llantas_checked',
+        'articulacion_checked',
+        'cilindro_checked',
+        'botellones_checked',
+        'zbar_checked',
+        'dogbone_checked',
+        'brazo_checked',
+        'tablero_checked',
+        'extintores_checked',
+        'epp_complete',
+        // Si tienes más campos, agrégalos aquí
+//        'checked_items',  // Si existe
+//        'total_items',    // Si existe
     ];
 
     protected $casts = [
         'inspection_date' => 'datetime',
         'inspection_items' => 'array',
         'work_hours' => 'decimal:2',
-        'completion_percentage' => 'decimal:2',
         'total_items' => 'integer',
         'checked_items' => 'integer',
     ];
@@ -36,6 +43,37 @@ class Inspection extends Model
     /**
      * Boot method para eventos del modelo
      */
+
+    // Agregar un accessor para calcular el porcentaje dinámicamente
+    public function getCompletionPercentageAttribute()
+    {
+        $checkboxFields = [
+            'cuchara_checked',
+            'llantas_checked',
+            'articulacion_checked',
+            'cilindro_checked',
+            'botellones_checked',
+            'zbar_checked',
+            'dogbone_checked',
+            'brazo_checked',
+            'tablero_checked',
+            'extintores_checked',
+        ];
+
+        $total = count($checkboxFields);
+        $checked = 0;
+
+        foreach ($checkboxFields as $field) {
+            if ($this->$field) {
+                $checked++;
+            }
+        }
+
+        return $total > 0 ? round(($checked / $total) * 100, 2) : 0;
+    }
+
+
+
     protected static function boot()
     {
         parent::boot();
@@ -59,7 +97,6 @@ class Inspection extends Model
             $this->status = 'incomplete';
         }
 
-        $this->completion_percentage = $this->calculateCompletionPercentage();
     }
 
     /**
@@ -67,11 +104,14 @@ class Inspection extends Model
      */
     public function calculateCompletionPercentage(): float
     {
-        if ($this->total_items === 0) {
+
+        // Evitar división por cero
+        if (!$this->total_items || $this->total_items == 0) {
             return 0;
         }
 
         return round(($this->checked_items / $this->total_items) * 100, 2);
+
     }
 
     /**
@@ -89,6 +129,7 @@ class Inspection extends Model
     {
         return $query->where('status', $status);
     }
+
 
     /**
      * Scope para inspecciones completadas
