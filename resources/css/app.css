@@ -2,7 +2,8 @@
 
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
-
+@source'./vendor/rappasoft/laravel-livewire-tables/resources/views/*.blade.php';
+@source'./vendor/rappasoft/laravel-livewire-tables/resources/views/**/*.blade.php';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../vendor/laravel/jetstream/**/*.blade.php';
 @source '../../storage/framework/views/*.php';

@@ -167,9 +167,7 @@ class InspectionForm extends Component
 
         DB::beginTransaction();
 
-
         try {
-
             // Crear la inspección
             $inspection = Inspection::create([
                 'equipment_id' => $this->equipment->id,
@@ -191,7 +189,28 @@ class InspectionForm extends Component
                 'epp_complete' => $this->epp,
             ]);
 
+            // AGREGAR ESTA PARTE - Guardar los problemas reportados
+            foreach ($this->reportedIssues as $issue) {
+                InspectionIssue::create([
+                    'inspection_id' => $inspection->id,
+                    'user_id' => Auth::id(),
+                    'component' => $issue['component'],
+                    'issue_type' => $issue['tipo_problema'],
+                    'severity' => $issue['severidad'],
+                    'description' => $issue['descripcion'],
+                    'recommended_action' => $issue['accion_recomendada'],
+                    'reported_at' => now(),
+                    'status' => 'abierto'
+                ]);
+            }
+
             DB::commit();
+
+            // Log para verificar
+            \Log::info('Inspección creada con issues:', [
+                'inspection_id' => $inspection->id,
+                'total_issues' => count($this->reportedIssues)
+            ]);
 
             session()->flash('success', 'Inspección guardada exitosamente');
 
@@ -200,15 +219,12 @@ class InspectionForm extends Component
         } catch (\Exception $e) {
             DB::rollBack();
 
-            // IMPORTANTE: Mostrar el error real
             \Log::error('Error al guardar inspección:', [
                 'message' => $e->getMessage(),
                 'line' => $e->getLine(),
                 'file' => $e->getFile(),
-                'trace' => $e->getTraceAsString()
             ]);
 
-            // Mostrar el error real al usuario (temporalmente para debug)
             $this->addError('save', 'Error: ' . $e->getMessage());
         }
     }

@@ -26,7 +26,7 @@ class Inspection extends Model
         'brazo_checked',
         'tablero_checked',
         'extintores_checked',
-        'epp_complete',
+    'epp_complete',
         // Si tienes más campos, agrégalos aquí
 //        'checked_items',  // Si existe
 //        'total_items',    // Si existe

@@ -17,6 +17,7 @@
     $variants = [
         'primary' => 'bg-yellow-main hover:bg-blue-main text-white',
         'secondary' => 'bg-gray-500 hover:bg-gray-600 text-white',
+        'danger' => 'bg-red-600 hover:bg-blue-main text-white',
         'db' => 'bg-rose-900 hover:bg-gray-600 text-white',
         'outline' => 'border-2 border-yellow-main text-yellow-main hover:bg-yellow-main hover:text-white',
         'ghost' => 'text-yellow-main hover:bg-yellow-main hover:text-white',

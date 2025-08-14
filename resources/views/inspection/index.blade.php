@@ -9,6 +9,9 @@
 
     <x-panels.main>
 
+{{--        @livewire('users-table');--}}
+        @livewire('inspection-table');
+
 
     </x-panels.main>
 </x-app-layout>

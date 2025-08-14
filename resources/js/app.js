@@ -1,6 +1,7 @@
 import './bootstrap';
-// Importar módulo de inspecciones
-// import {InspectionManager} from './inspections';
+import '../../vendor/rappasoft/laravel-livewire-tables/resources/imports/laravel-livewire-tables-all.js';
+
+
 
 import.meta.glob([
     '../images/**'
